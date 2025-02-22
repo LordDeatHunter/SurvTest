@@ -1,0 +1,56 @@
+[gd_scene load_steps=8 format=3 uid="uid://de8nidaic0qgr"]
+
+[ext_resource type="Script" path="res://world.gd" id="1_7561c"]
+[ext_resource type="PackedScene" uid="uid://b5rkalf5fpin6" path="res://actors/player.tscn" id="1_heqpp"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_m5gqq"]
+sky_top_color = Color(0.435294, 0.580392, 0.690196, 1)
+sky_horizon_color = Color(0.658823, 0.687348, 0.705799, 1)
+ground_horizon_color = Color(0.658823, 0.687348, 0.705799, 1)
+
+[sub_resource type="Sky" id="Sky_y4ieq"]
+sky_material = SubResource("ProceduralSkyMaterial_m5gqq")
+
+[sub_resource type="Environment" id="Environment_ofmmo"]
+background_mode = 2
+sky = SubResource("Sky_y4ieq")
+tonemap_mode = 2
+glow_enabled = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kmxws"]
+diffuse_mode = 1
+albedo_color = Color(0.278431, 0.580392, 0.207843, 1)
+metallic = 1.0
+metallic_specular = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yfgiq"]
+
+[node name="World" type="Node3D"]
+script = ExtResource("1_7561c")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.384295, -0.338358, 0.858971, 0, 0.930418, 0.366501, -0.92321, -0.140845, 0.357555, 0, 0, 0)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Environment_ofmmo")
+
+[node name="Player" parent="." instance=ExtResource("1_heqpp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.8735, 0)
+
+[node name="CSGBox3D" type="CSGBox3D" parent="."]
+use_collision = true
+size = Vector3(200, 1, 200)
+material = SubResource("StandardMaterial3D_kmxws")
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.2877, 6, 0)
+use_collision = true
+size = Vector3(5, 5, 5)
+material = SubResource("StandardMaterial3D_yfgiq")
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+use_collision = true
+size = Vector3(5, 5, 5)
+material = SubResource("StandardMaterial3D_yfgiq")

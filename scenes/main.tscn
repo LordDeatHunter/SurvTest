@@ -1,7 +1,7 @@
-[gd_scene load_steps=8 format=3 uid="uid://de8nidaic0qgr"]
+[gd_scene load_steps=7 format=3 uid="uid://de8nidaic0qgr"]
 
 [ext_resource type="Script" path="res://scenes/main.gd" id="1_7561c"]
-[ext_resource type="PackedScene" uid="uid://b5rkalf5fpin6" path="res://actors/player.tscn" id="1_heqpp"]
+[ext_resource type="PackedScene" uid="uid://b5rkalf5fpin6" path="res://scenes/actors/player.tscn" id="1_heqpp"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_m5gqq"]
 sky_top_color = Color(0.435294, 0.580392, 0.690196, 1)
@@ -16,12 +16,6 @@ background_mode = 2
 sky = SubResource("Sky_y4ieq")
 tonemap_mode = 2
 glow_enabled = true
-
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_kmxws"]
-diffuse_mode = 1
-albedo_color = Color(0.278431, 0.580392, 0.207843, 1)
-metallic = 1.0
-metallic_specular = 0.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yfgiq"]
 
@@ -38,11 +32,6 @@ environment = SubResource("Environment_ofmmo")
 [node name="Player" parent="." instance=ExtResource("1_heqpp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.8735, 0)
 
-[node name="CSGBox3D" type="CSGBox3D" parent="."]
-use_collision = true
-size = Vector3(200, 1, 200)
-material = SubResource("StandardMaterial3D_kmxws")
-
 [node name="CSGBox3D3" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.288, 5.5, 0)
 use_collision = true
@@ -50,7 +39,14 @@ size = Vector3(5, 5, 5)
 material = SubResource("StandardMaterial3D_yfgiq")
 
 [node name="CSGBox3D2" type="CSGBox3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.4, 0)
 use_collision = true
-size = Vector3(5, 5, 5)
+size = Vector3(5, 2.04636, 5)
 material = SubResource("StandardMaterial3D_yfgiq")
+
+[node name="GrassPatches" type="Node" parent="."]
+
+[node name="HidePatches" type="Timer" parent="."]
+autostart = true
+
+[connection signal="timeout" from="HidePatches" to="." method="_on_hide_patches_timeout"]

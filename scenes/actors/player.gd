@@ -23,7 +23,6 @@ var current_multijumps: int = 0
 var is_sprinting: bool = false
 var time_since_last_forward: float = 1.0
 var max_sprint_press_delay: float = 0.5
-var height: float = 2.0
 var collision_capsule_shape: CapsuleShape3D:
 	get:
 		if not collision_shape_3d.shape:
@@ -136,6 +135,21 @@ func _handle_jumping():
 			current_multijumps += 1
 
 
+func _get_max_standing_height() -> float:
+	var length: float = DEFAULT_HEIGHT - collision_capsule_shape.height
+	var start: Vector3 = position + Vector3(0, collision_capsule_shape.height, 0)
+	var end: Vector3 = start + Vector3(0, length, 0)
+
+	var intersect_ray: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(
+		start, end, 1, [self]
+	)
+
+	var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+	var result: Dictionary = space_state.intersect_ray(intersect_ray)
+
+	return DEFAULT_HEIGHT if result.is_empty() else collision_capsule_shape.height
+
+
 func _handle_crouching(delta: float):
 	if Input.is_action_just_pressed("crouch"):
 		is_crouching = true
@@ -147,17 +161,15 @@ func _handle_crouching(delta: float):
 
 	var lerp_amount: float = 10 * delta
 
-	if is_crouching:
-		height = CROUCH_HEIGHT
-		head.transform.origin.y = lerp(head.transform.origin.y, CAMERA_CROUCH_HEIGHT, lerp_amount)
-	else:
-		height = DEFAULT_HEIGHT
-		head.transform.origin.y = lerp(head.transform.origin.y, CAMERA_HEIGHT, lerp_amount)
+	var target_height: float = CROUCH_HEIGHT if is_crouching else _get_max_standing_height()
+	var head_target_height: float = target_height * 0.875
 
-	if collision_capsule_shape:
-		collision_capsule_shape.height = lerp(collision_capsule_shape.height, height, lerp_amount)
-		collision_shape_3d.position.y = lerp(collision_shape_3d.position.y, height / 2, lerp_amount)
-
-	if capsule_mesh:
-		capsule_mesh.height = lerp(capsule_mesh.height, height, lerp_amount)
-		mesh_instance_3d.position.y = lerp(mesh_instance_3d.position.y, height / 2, lerp_amount)
+	head.transform.origin.y = lerp(head.transform.origin.y, head_target_height, lerp_amount)
+	collision_capsule_shape.height = lerp(
+		collision_capsule_shape.height, target_height, lerp_amount
+	)
+	collision_shape_3d.position.y = lerp(
+		collision_shape_3d.position.y, target_height / 2, lerp_amount
+	)
+	capsule_mesh.height = lerp(capsule_mesh.height, target_height, lerp_amount)
+	mesh_instance_3d.position.y = lerp(mesh_instance_3d.position.y, target_height / 2, lerp_amount)

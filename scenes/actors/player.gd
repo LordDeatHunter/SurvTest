@@ -11,11 +11,11 @@ const BASE_FOV: int = 75
 const WALK_FOV_MULT: float = 1.3
 const SPRINT_FOV_MULT: float = 2.6
 
-@export var can_doublejump: bool = true
+@export var max_multijumps: int = 0
 
 var t_bob: int = 0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
-var has_doublejumped: bool = true
+var current_multijumps: int = 0
 
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
@@ -36,14 +36,14 @@ func _physics_process(delta):
 	velocity -= Vector3(0, gravity, 0) * delta
 
 	if is_on_floor():
-		has_doublejumped = false
+		current_multijumps = 0
 
-	var can_jump = is_on_floor() or (can_doublejump and not has_doublejumped)
+	var can_jump: bool = is_on_floor() or (current_multijumps < max_multijumps)
 
 	if Input.is_action_just_pressed("jump") and can_jump:
 		velocity.y = JUMP_VELOCITY
 		if not is_on_floor():
-			has_doublejumped = true
+			current_multijumps += 1
 
 	var is_sprinting: bool = Input.is_action_pressed("sprint")
 	var speed: float = SPRINT_SPEED if is_sprinting else WALK_SPEED

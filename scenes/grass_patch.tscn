@@ -1,7 +1,7 @@
 [gd_scene load_steps=11 format=3 uid="uid://cbeclbekg2cyy"]
 
-[ext_resource type="Script" path="res://scenes/grass_patch.gd" id="1_57qyk"]
-[ext_resource type="Shader" path="res://assets/shaders/grass.gdshader" id="2_loflp"]
+[ext_resource type="Script" uid="uid://boir7kuk8p34" path="res://scenes/grass_patch.gd" id="1_57qyk"]
+[ext_resource type="Shader" uid="uid://oq4vmhaekvk1" path="res://assets/shaders/grass.gdshader" id="2_loflp"]
 [ext_resource type="ArrayMesh" uid="uid://bkre3mnfefe4l" path="res://assets/grass_straw.obj" id="3_fbjsp"]
 
 [sub_resource type="FastNoiseLite" id="FastNoiseLite_grehs"]
@@ -20,9 +20,9 @@ shader_parameter/player_displacement_strength = 1.0
 shader_parameter/player_displacement_size = 1.5
 shader_parameter/wind_direction = Vector3(0.4, 0, 0.9)
 shader_parameter/wind_strength = 0.2
+shader_parameter/wind_noise = SubResource("NoiseTexture2D_c467w")
 shader_parameter/wind_noise_size = 1.0
 shader_parameter/wind_noise_speed = 0.025
-shader_parameter/wind_noise = SubResource("NoiseTexture2D_c467w")
 
 [sub_resource type="MultiMesh" id="MultiMesh_ybsfe"]
 transform_format = 1

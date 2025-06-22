@@ -16,6 +16,9 @@ const SPRINT_FOV_MULT: float = 2.6
 var t_bob: int = 0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var current_multijumps: int = 0
+var is_sprinting: bool = false
+var time_since_last_forward: float = 1.0
+var max_sprint_press_delay: float = 0.5
 
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
@@ -45,12 +48,26 @@ func _physics_process(delta):
 		if not is_on_floor():
 			current_multijumps += 1
 
-	var is_sprinting: bool = Input.is_action_pressed("sprint")
+	if (
+		Input.is_action_just_pressed("sprint")
+		or (
+			Input.is_action_just_pressed("move_forward")
+			and time_since_last_forward < max_sprint_press_delay
+		)
+	):
+		is_sprinting = true
+
+	if Input.is_action_just_pressed("move_forward"):
+		time_since_last_forward = 0.0
+	else:
+		time_since_last_forward += delta
+
+	if not Input.is_action_pressed("move_forward"):
+		is_sprinting = false
+
 	var speed: float = SPRINT_SPEED if is_sprinting else WALK_SPEED
 
-	var input_dir: Vector2 = Input.get_vector(
-		"move_left", "move_right", "move_forward", "move_backward"
-	)
+	var input_dir: Vector2 = get_input_vector()
 	var direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
 	if direction:
@@ -87,3 +104,7 @@ func _headbob(time) -> Vector3:
 
 func get_height() -> float:
 	return head.transform.origin.y
+
+
+func get_input_vector() -> Vector2:
+	return Input.get_vector("move_left", "move_right", "move_forward", "move_backward")

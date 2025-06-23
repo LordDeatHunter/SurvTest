@@ -4,6 +4,7 @@ extends CharacterBody3D
 const WALK_SPEED: float = 5.0
 const SPRINT_SPEED: float = 7.5
 const JUMP_VELOCITY: float = 4.5
+const WALL_JUMP_VELOCITY: float = 12.0
 const SENSITIVITY: float = 0.004
 const BOB_FREQ: float = 0.25
 const BOB_AMP: float = 0.1
@@ -55,6 +56,7 @@ func _unhandled_input(event):
 func _physics_process(delta):
 	velocity -= Vector3(0, gravity, 0) * delta
 
+	_handle_wall_sliding(delta)
 	_handle_jumping()
 	_handle_crouching(delta)
 	_handle_sprinting(delta)
@@ -124,14 +126,19 @@ func _handle_sprinting(delta: float):
 
 
 func _handle_jumping():
-	if is_on_floor():
+	if is_on_floor() or is_on_wall():
 		current_multijumps = 0
 
-	var can_jump: bool = is_on_floor() or (current_multijumps < max_multijumps)
+	var can_jump: bool = is_on_floor() or is_on_wall() or (current_multijumps < max_multijumps)
 
 	if Input.is_action_just_pressed("jump") and can_jump:
-		velocity.y = JUMP_VELOCITY
-		if not is_on_floor():
+		if is_on_wall():
+			var push_velocity: Vector3 = get_wall_normal() * WALL_JUMP_VELOCITY
+			velocity = Vector3(push_velocity.x, JUMP_VELOCITY, push_velocity.z)
+		else:
+			velocity.y = JUMP_VELOCITY
+
+		if not is_on_floor() and not is_on_wall():
 			current_multijumps += 1
 
 
@@ -173,3 +180,16 @@ func _handle_crouching(delta: float):
 	)
 	capsule_mesh.height = lerp(capsule_mesh.height, target_height, lerp_amount)
 	mesh_instance_3d.position.y = lerp(mesh_instance_3d.position.y, target_height / 2, lerp_amount)
+
+
+func _handle_wall_sliding(delta: float) -> void:
+	if not is_on_wall_only() or velocity.y > 0:
+		return
+
+	var wall_normal: Vector3 = get_wall_normal()
+	if wall_normal.y > 0.5:
+		return
+
+	velocity.x = lerp(velocity.x, 0.0, delta * 10)
+	velocity.z = lerp(velocity.z, 0.0, delta * 10)
+	velocity.y = lerp(velocity.y, -0.25, delta * 10)

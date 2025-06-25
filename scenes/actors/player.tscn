@@ -1,6 +1,7 @@
-[gd_scene load_steps=4 format=3 uid="uid://b5rkalf5fpin6"]
+[gd_scene load_steps=5 format=3 uid="uid://b5rkalf5fpin6"]
 
 [ext_resource type="Script" uid="uid://d0r4i8b8pntni" path="res://scenes/actors/player.gd" id="1_utxda"]
+[ext_resource type="PackedScene" uid="uid://se60aaxu64dc" path="res://scenes/ui/inventory_ui.tscn" id="2_ru62r"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_p2cts"]
 
@@ -24,3 +25,18 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.75, 0)
 [node name="Camera3D" type="Camera3D" parent="Head"]
 cull_mask = 1048573
 current = true
+
+[node name="MarginContainer" type="MarginContainer" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+theme_override_constants/margin_bottom = 16
+
+[node name="InventoryUi" parent="MarginContainer" instance=ExtResource("2_ru62r")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 8
+columns = 9

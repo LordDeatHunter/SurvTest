@@ -35,13 +35,26 @@ var capsule_mesh: CapsuleMesh:
 			return null
 		return mesh_instance_3d.mesh as CapsuleMesh
 var is_crouching: bool = false
-var held_stack: Item = null
+var held_stack: Item = null:
+	get:
+		return held_stack
+	set(value):
+		if value is Item:
+			held_stack = value
+			held_item_sprite.texture = held_stack.icon if held_stack.icon else null
+			held_item_node.visible = true
+		else:
+			held_stack = null
+			held_item_sprite.texture = null
+			held_item_node.visible = false
 
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
 @onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 @onready var hotbar: InventoryUi = %InventoryUi
+@onready var held_item_node: Node2D = %HeldItem
+@onready var held_item_sprite: Sprite2D = %HeldItem/Sprite2D
 
 
 func _ready():
@@ -59,10 +72,15 @@ func _input(event):
 
 
 func _unhandled_input(event):
-	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		head.rotate_y(-event.relative.x * SENSITIVITY)
-		camera.rotate_x(-event.relative.y * SENSITIVITY)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+	if event is InputEventMouseMotion:
+		var mouse_mode: int = Input.get_mouse_mode()
+		if mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			head.rotate_y(-event.relative.x * SENSITIVITY)
+			camera.rotate_x(-event.relative.y * SENSITIVITY)
+			camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+		elif mouse_mode == Input.MOUSE_MODE_VISIBLE:
+			var mouse_pos: Vector2 = get_viewport().get_mouse_position()
+			held_item_node.position = mouse_pos
 
 
 func _physics_process(delta):

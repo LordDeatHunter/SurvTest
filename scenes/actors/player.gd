@@ -35,6 +35,7 @@ var capsule_mesh: CapsuleMesh:
 			return null
 		return mesh_instance_3d.mesh as CapsuleMesh
 var is_crouching: bool = false
+var held_stack: Item = null
 
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
@@ -45,6 +46,8 @@ var is_crouching: bool = false
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	hotbar.set_item(3, Items.example_item)
+	hotbar.slot_clicked.connect(_on_inventory_slot_clicked)
 
 
 func _input(event):
@@ -202,3 +205,9 @@ func _handle_wall_sliding(delta: float) -> void:
 	velocity.x = lerp(velocity.x, 0.0, delta * 10)
 	velocity.z = lerp(velocity.z, 0.0, delta * 10)
 	velocity.y = lerp(velocity.y, -0.25, delta * 10)
+
+
+func _on_inventory_slot_clicked(slot_index: int, item: Item):
+	var prev_held_stack: Item = held_stack
+	held_stack = item
+	hotbar.set_item(slot_index, prev_held_stack)

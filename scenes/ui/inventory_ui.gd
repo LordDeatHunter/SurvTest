@@ -1,6 +1,8 @@
 class_name InventoryUi
 extends GridContainer
 
+signal slot_clicked(slot_index: int, item: Item)
+
 var inventory: Inventory = Inventory.new(9)
 var selected_slot: int:
 	get:
@@ -27,6 +29,7 @@ func _update_inventory():
 	for i in range(inventory.get_size()):
 		var item_slot: InventorySlot = item_template.instantiate()
 		item_slot.item = inventory.items[i]
+		item_slot.item_click_pressed.connect(_on_item_slot_pressed.bind(i))
 
 		if inventory.items[i] is Item:
 			item_slot.set_item(inventory.items[i] as Item)
@@ -47,14 +50,16 @@ func _input(event: InputEvent) -> void:
 		and event.is_pressed()
 	):
 		selected_slot = (selected_slot + 1) % inventory.get_size()
-	elif (
-		event is InputEventMouseButton
-		and event.button_index == MOUSE_BUTTON_LEFT
-		and event.is_pressed()
-	):
-		var mouse_pos: Vector2 = get_global_mouse_position()
-		for i in range(get_child_count()):
-			var slot: InventorySlot = get_child(i) as InventorySlot
-			if slot.get_global_rect().has_point(mouse_pos):
-				selected_slot = i
-				break
+
+
+func set_item(slot_index: int, item: Item) -> void:
+	if slot_index < 0 or slot_index >= inventory.get_size():
+		return
+
+	var item_slot: InventorySlot = get_child(slot_index) as InventorySlot
+	item_slot.set_item(item)
+
+
+func _on_item_slot_pressed(item: Item, index: int) -> void:
+	slot_clicked.emit(index, item)
+	selected_slot = index

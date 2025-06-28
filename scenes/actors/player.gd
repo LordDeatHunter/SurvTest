@@ -16,8 +16,9 @@ const CROUCH_HEIGHT: float = 1.5
 const CAMERA_HEIGHT: float = 1.75
 const CAMERA_CROUCH_HEIGHT: float = 1.25
 
-@export var max_multijumps: int = 0
+const DROPPED_ITEM_SCENE = preload("res://scenes/DroppedItem.tscn")
 
+@export var max_multijumps: int = 0
 var t_bob: int = 0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var current_multijumps: int = 0
@@ -64,16 +65,29 @@ func _ready():
 
 
 func _input(event):
+	var mouse_mode: int = Input.get_mouse_mode()
 	if event is InputEventKey and event.is_pressed() and event.keycode == KEY_TAB:
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		if mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+	elif (
+		event is InputEventMouseButton
+		and mouse_mode == Input.MOUSE_MODE_VISIBLE
+		and event.button_index == MOUSE_BUTTON_LEFT
+		and not hotbar.get_rect().has_point(event.position)
+	):
+		if held_stack and held_stack.quantity > 0:
+			var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
+			dropped_item.setup(held_stack, position + Vector3(0, 0.5, 0))
+			held_stack = null
+			get_parent().add_child.call_deferred(dropped_item)
+
 
 func _unhandled_input(event):
+	var mouse_mode: int = Input.get_mouse_mode()
 	if event is InputEventMouseMotion:
-		var mouse_mode: int = Input.get_mouse_mode()
 		if mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			head.rotate_y(-event.relative.x * SENSITIVITY)
 			camera.rotate_x(-event.relative.y * SENSITIVITY)

@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3 uid="uid://bmljo7ct4w00e"]
+
+[ext_resource type="Script" uid="uid://bkgcs3yh3hn6m" path="res://scenes/dropped_item.gd" id="1_ip0rf"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_hptdf"]
+size = Vector3(0.4, 0.4, 0.4)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ip0rf"]
+albedo_color = Color(0, 0.8, 0.35, 1)
+metallic = 0.5
+metallic_specular = 1.0
+
+[sub_resource type="BoxMesh" id="BoxMesh_xr8br"]
+material = SubResource("StandardMaterial3D_ip0rf")
+size = Vector3(0.4, 0.4, 0.4)
+
+[node name="DroppedItem" type="RigidBody3D"]
+collision_layer = 4
+collision_mask = 5
+mass = 0.2
+script = ExtResource("1_ip0rf")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("BoxShape3D_hptdf")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+layers = 3
+mesh = SubResource("BoxMesh_xr8br")

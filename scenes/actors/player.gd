@@ -16,8 +16,9 @@ const CROUCH_HEIGHT: float = 1.5
 const CAMERA_HEIGHT: float = 1.75
 const CAMERA_CROUCH_HEIGHT: float = 1.25
 
-@export var max_multijumps: int = 0
+const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/DroppedItem.tscn")
 
+@export var max_multijumps: int = 0
 var t_bob: int = 0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var current_multijumps: int = 0
@@ -35,30 +36,71 @@ var capsule_mesh: CapsuleMesh:
 			return null
 		return mesh_instance_3d.mesh as CapsuleMesh
 var is_crouching: bool = false
+var held_stack: Item = null:
+	get:
+		return held_stack
+	set(value):
+		if value is Item:
+			held_stack = value
+			held_item_sprite.texture = held_stack.icon if held_stack.icon else null
+			held_item_node.visible = true
+		else:
+			held_stack = null
+			held_item_sprite.texture = null
+			held_item_node.visible = false
+var prev_collider: Object = null
 
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
 @onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
+@onready var hotbar: InventoryUi = %InventoryUi
+@onready var held_item_node: Node2D = %HeldItem
+@onready var held_item_sprite: Sprite2D = %HeldItem/Sprite2D
+@onready var ray_cast: RayCast3D = %RayCast
 
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	hotbar.set_item(3, Items.example_item)
+	hotbar.slot_clicked.connect(_on_inventory_slot_clicked)
 
 
 func _input(event):
+	var mouse_mode: int = Input.get_mouse_mode()
 	if event is InputEventKey and event.is_pressed() and event.keycode == KEY_TAB:
-		if Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
+		if mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 
+	elif (
+		event is InputEventMouseButton
+		and mouse_mode == Input.MOUSE_MODE_VISIBLE
+		and event.button_index == MOUSE_BUTTON_LEFT
+		and not hotbar.get_rect().has_point(event.position)
+	):
+		if held_stack and held_stack.quantity > 0:
+			var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
+			dropped_item.setup(held_stack, position + Vector3(0, 0.5, 0))
+			held_stack = null
+			get_parent().add_child.call_deferred(dropped_item)
+
+	if prev_collider and prev_collider is DroppedItem and Input.is_action_just_pressed("interact"):
+		var dropped_item: DroppedItem = prev_collider as DroppedItem
+		dropped_item.try_pick_up(hotbar.inventory)
+
 
 func _unhandled_input(event):
-	if event is InputEventMouseMotion and Input.get_mouse_mode() == Input.MOUSE_MODE_CAPTURED:
-		head.rotate_y(-event.relative.x * SENSITIVITY)
-		camera.rotate_x(-event.relative.y * SENSITIVITY)
-		camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+	var mouse_mode: int = Input.get_mouse_mode()
+	if event is InputEventMouseMotion:
+		if mouse_mode == Input.MOUSE_MODE_CAPTURED:
+			head.rotate_y(-event.relative.x * SENSITIVITY)
+			camera.rotate_x(-event.relative.y * SENSITIVITY)
+			camera.rotation.x = clamp(camera.rotation.x, deg_to_rad(-90), deg_to_rad(90))
+		elif mouse_mode == Input.MOUSE_MODE_VISIBLE:
+			var mouse_pos: Vector2 = get_viewport().get_mouse_position()
+			held_item_node.position = mouse_pos
 
 
 func _physics_process(delta):
@@ -97,6 +139,22 @@ func _physics_process(delta):
 	camera.fov = lerp(camera.fov, target_fov, delta * 8.0)
 
 	move_and_slide()
+
+
+func _process(_delta: float) -> void:
+	var result: Object = ray_cast.get_collider()
+	if result == prev_collider:
+		return
+
+	if prev_collider and prev_collider is DroppedItem:
+		var prev_dropped_item: DroppedItem = prev_collider as DroppedItem
+		prev_dropped_item.set_highlighted(false)
+
+	if result and result is DroppedItem:
+		var dropped_item: DroppedItem = result as DroppedItem
+		dropped_item.set_highlighted(true)
+
+	prev_collider = result
 
 
 func _headbob(time) -> Vector3:
@@ -201,3 +259,9 @@ func _handle_wall_sliding(delta: float) -> void:
 	velocity.x = lerp(velocity.x, 0.0, delta * 10)
 	velocity.z = lerp(velocity.z, 0.0, delta * 10)
 	velocity.y = lerp(velocity.y, -0.25, delta * 10)
+
+
+func _on_inventory_slot_clicked(slot_index: int, item: Item):
+	var prev_held_stack: Item = held_stack
+	held_stack = item
+	hotbar.set_item(slot_index, prev_held_stack)

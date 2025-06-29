@@ -4,9 +4,12 @@
 [ext_resource type="PackedScene" uid="uid://b5rkalf5fpin6" path="res://scenes/actors/player.tscn" id="1_heqpp"]
 
 [sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_m5gqq"]
-sky_top_color = Color(0.435294, 0.580392, 0.690196, 1)
-sky_horizon_color = Color(0.658823, 0.687348, 0.705799, 1)
-ground_horizon_color = Color(0.658823, 0.687348, 0.705799, 1)
+sky_top_color = Color(0.533663, 0.806064, 0.965937, 1)
+sky_horizon_color = Color(0.341176, 0.717647, 1, 1)
+sky_curve = 0.643062
+sky_cover_modulate = Color(0.984377, 0.751499, 0.47202, 0.16)
+ground_bottom_color = Color(0.341176, 0.717647, 1, 1)
+ground_horizon_color = Color(0.341176, 0.717647, 1, 1)
 
 [sub_resource type="Sky" id="Sky_y4ieq"]
 sky_material = SubResource("ProceduralSkyMaterial_m5gqq")
@@ -14,7 +17,9 @@ sky_material = SubResource("ProceduralSkyMaterial_m5gqq")
 [sub_resource type="Environment" id="Environment_ofmmo"]
 background_mode = 2
 sky = SubResource("Sky_y4ieq")
+ambient_light_source = 3
 tonemap_mode = 2
+ssao_enabled = true
 glow_enabled = true
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yfgiq"]

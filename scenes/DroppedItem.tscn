@@ -6,7 +6,9 @@
 size = Vector3(0.4, 0.4, 0.4)
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_ip0rf"]
-albedo_color = Color(0, 1, 0.55, 1)
+albedo_color = Color(0, 0.8, 0.35, 1)
+metallic = 0.5
+metallic_specular = 1.0
 
 [sub_resource type="BoxMesh" id="BoxMesh_xr8br"]
 material = SubResource("StandardMaterial3D_ip0rf")
@@ -14,6 +16,7 @@ size = Vector3(0.4, 0.4, 0.4)
 
 [node name="DroppedItem" type="RigidBody3D"]
 collision_layer = 4
+collision_mask = 5
 mass = 0.2
 script = ExtResource("1_ip0rf")
 

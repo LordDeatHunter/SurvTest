@@ -16,7 +16,7 @@ const CROUCH_HEIGHT: float = 1.5
 const CAMERA_HEIGHT: float = 1.75
 const CAMERA_CROUCH_HEIGHT: float = 1.25
 
-const DROPPED_ITEM_SCENE = preload("res://scenes/DroppedItem.tscn")
+const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/DroppedItem.tscn")
 
 @export var max_multijumps: int = 0
 var t_bob: int = 0
@@ -48,6 +48,7 @@ var held_stack: Item = null:
 			held_stack = null
 			held_item_sprite.texture = null
 			held_item_node.visible = false
+var prev_collider: Object = null
 
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
@@ -56,6 +57,7 @@ var held_stack: Item = null:
 @onready var hotbar: InventoryUi = %InventoryUi
 @onready var held_item_node: Node2D = %HeldItem
 @onready var held_item_sprite: Sprite2D = %HeldItem/Sprite2D
+@onready var ray_cast: RayCast3D = %RayCast
 
 
 func _ready():
@@ -83,6 +85,10 @@ func _input(event):
 			dropped_item.setup(held_stack, position + Vector3(0, 0.5, 0))
 			held_stack = null
 			get_parent().add_child.call_deferred(dropped_item)
+
+	if prev_collider and prev_collider is DroppedItem and Input.is_action_just_pressed("interact"):
+		var dropped_item: DroppedItem = prev_collider as DroppedItem
+		dropped_item.try_pick_up(hotbar.inventory)
 
 
 func _unhandled_input(event):
@@ -133,6 +139,22 @@ func _physics_process(delta):
 	camera.fov = lerp(camera.fov, target_fov, delta * 8.0)
 
 	move_and_slide()
+
+
+func _process(_delta: float) -> void:
+	var result: Object = ray_cast.get_collider()
+	if result == prev_collider:
+		return
+
+	if prev_collider and prev_collider is DroppedItem:
+		var prev_dropped_item: DroppedItem = prev_collider as DroppedItem
+		prev_dropped_item.set_highlighted(false)
+
+	if result and result is DroppedItem:
+		var dropped_item: DroppedItem = result as DroppedItem
+		dropped_item.set_highlighted(true)
+
+	prev_collider = result
 
 
 func _headbob(time) -> Vector3:

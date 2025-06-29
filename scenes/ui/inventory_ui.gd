@@ -18,6 +18,7 @@ var selected_slot: int:
 
 
 func _ready():
+	inventory.item_added.connect(_update_slot)
 	_update_inventory()
 	selected_slot = 0
 
@@ -28,13 +29,20 @@ func _update_inventory():
 
 	for i in range(inventory.get_size()):
 		var item_slot: InventorySlot = item_template.instantiate()
-		item_slot.item = inventory.items[i]
 		item_slot.item_click_pressed.connect(_on_item_slot_pressed.bind(i))
 
 		if inventory.items[i] is Item:
 			item_slot.set_item(inventory.items[i] as Item)
 
 		add_child(item_slot)
+
+
+func _update_slot(slot_index: int) -> void:
+	if slot_index < 0 or slot_index >= inventory.get_size():
+		return
+
+	var item_slot: InventorySlot = get_child(slot_index) as InventorySlot
+	item_slot.set_item(inventory.items[slot_index])
 
 
 func _input(event: InputEvent) -> void:
@@ -56,8 +64,8 @@ func set_item(slot_index: int, item: Item) -> void:
 	if slot_index < 0 or slot_index >= inventory.get_size():
 		return
 
-	var item_slot: InventorySlot = get_child(slot_index) as InventorySlot
-	item_slot.set_item(item)
+	if not inventory.set_item(slot_index, item):
+		return
 
 
 func _on_item_slot_pressed(item: Item, index: int) -> void:

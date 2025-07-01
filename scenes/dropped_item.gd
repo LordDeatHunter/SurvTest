@@ -2,8 +2,15 @@ class_name DroppedItem
 extends RigidBody3D
 
 var stack: Item
+var size_tween: Tween
 
 @onready var mesh_instance: MeshInstance3D = $MeshInstance3D
+
+
+func _ready() -> void:
+	size_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT).set_loops()
+	size_tween.tween_property(mesh_instance, "scale", Vector3.ONE * 1.2, 0.75)
+	size_tween.tween_property(mesh_instance, "scale", Vector3.ONE * 0.8, 0.75)
 
 
 func setup(item: Item, spawn_position: Vector3 = Vector3.ZERO) -> void:

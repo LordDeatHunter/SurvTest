@@ -59,7 +59,8 @@ var current_dash_cooldown: float = 0.0
 @onready var camera = $Head/Camera3D
 @onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
-@onready var hotbar: InventoryUi = %InventoryUi
+@onready var hotbar: InventoryUi = %HotbarUi
+@onready var inventory: InventoryUi = %InventoryUi
 @onready var held_item_node: Node2D = %HeldItem
 @onready var held_item_sprite: Sprite2D = %HeldItem/Sprite2D
 @onready var ray_cast: RayCast3D = %RayCast
@@ -68,7 +69,9 @@ var current_dash_cooldown: float = 0.0
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	hotbar.set_item(3, Items.example_item)
-	hotbar.slot_clicked.connect(_on_inventory_slot_clicked)
+	hotbar.slot_clicked.connect(_on_hotbar_slot_clicked)
+	inventory.slot_clicked.connect(_on_inventory_slot_clicked)
+	inventory.hide()
 
 
 func _input(event):
@@ -76,14 +79,17 @@ func _input(event):
 	if event is InputEventKey and event.is_pressed() and event.keycode == KEY_TAB:
 		if mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			inventory.show()
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			inventory.hide()
 
 	elif (
 		event is InputEventMouseButton
 		and mouse_mode == Input.MOUSE_MODE_VISIBLE
 		and event.button_index == MOUSE_BUTTON_LEFT
 		and not hotbar.get_rect().has_point(event.position)
+		and not inventory.get_rect().has_point(event.position)
 	):
 		if held_stack and held_stack.quantity > 0:
 			var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
@@ -258,6 +264,12 @@ func _handle_wall_sliding(delta: float) -> void:
 
 
 func _on_inventory_slot_clicked(slot_index: int, item: Item):
+	var prev_held_stack: Item = held_stack
+	held_stack = item
+	inventory.set_item(slot_index, prev_held_stack)
+
+
+func _on_hotbar_slot_clicked(slot_index: int, item: Item):
 	var prev_held_stack: Item = held_stack
 	held_stack = item
 	hotbar.set_item(slot_index, prev_held_stack)

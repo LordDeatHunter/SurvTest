@@ -44,6 +44,14 @@ theme_override_constants/margin_bottom = 16
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
+size_flags_vertical = 4
+columns = 9
+inventory_size = 27
+
+[node name="HotbarUi" parent="MarginContainer" instance=ExtResource("2_ru62r")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_horizontal = 4
 size_flags_vertical = 8
 columns = 9
 

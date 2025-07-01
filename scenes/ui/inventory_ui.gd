@@ -3,7 +3,9 @@ extends GridContainer
 
 signal slot_clicked(slot_index: int, item: Item)
 
-var inventory: Inventory = Inventory.new(9)
+@export var inventory_size: int = 9
+
+var inventory: Inventory
 var selected_slot: int:
 	get:
 		return selected_slot
@@ -18,6 +20,7 @@ var selected_slot: int:
 
 
 func _ready():
+	inventory = Inventory.new(inventory_size)
 	inventory.item_added.connect(_update_slot)
 	_update_inventory()
 	selected_slot = 0

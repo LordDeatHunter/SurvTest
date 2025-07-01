@@ -1,10 +1,17 @@
 class_name Item
 extends Object
 
+signal quantity_changed(amount: int)
+
 @export var name: String = "Item"
 @export var description: String = "An item in the inventory."
 @export var icon: Texture2D
-@export var quantity: int = 1
+@export var quantity: int = 1:
+	get:
+		return quantity
+	set(value):
+		quantity = value
+		quantity_changed.emit(quantity)
 @export var max_quantity: int = 99
 
 

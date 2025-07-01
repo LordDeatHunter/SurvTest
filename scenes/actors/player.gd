@@ -15,6 +15,8 @@ const DEFAULT_HEIGHT: float = 2.0
 const CROUCH_HEIGHT: float = 1.5
 const CAMERA_HEIGHT: float = 1.75
 const CAMERA_CROUCH_HEIGHT: float = 1.25
+const DASH_VELOCITY: float = 40.0
+const MAX_DASH_COOLDOWN: float = 1.0
 
 const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/DroppedItem.tscn")
 
@@ -23,8 +25,10 @@ var t_bob: int = 0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var current_multijumps: int = 0
 var is_sprinting: bool = false
-var time_since_last_forward: float = 1.0
-var max_sprint_press_delay: float = 0.5
+var time_since_last_press: Dictionary[String, float] = {
+	"move_forward": 1.0, "move_left": 1.0, "move_right": 1.0
+}
+var max_dash_press_delay: float = 0.5
 var collision_capsule_shape: CapsuleShape3D:
 	get:
 		if not collision_shape_3d.shape:
@@ -49,6 +53,7 @@ var held_stack: Item = null:
 			held_item_sprite.texture = null
 			held_item_node.visible = false
 var prev_collider: Object = null
+var current_dash_cooldown: float = 0.0
 
 @onready var head = $Head
 @onready var camera = $Head/Camera3D
@@ -109,23 +114,25 @@ func _physics_process(delta):
 	_handle_wall_sliding(delta)
 	_handle_jumping()
 	_handle_crouching(delta)
-	_handle_sprinting(delta)
+	_handle_sprinting()
 
 	var speed: float = SPRINT_SPEED if is_sprinting else WALK_SPEED
 
 	var input_dir: Vector2 = get_input_vector()
 	var direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
 
-	if direction:
-		if is_on_floor():
-			velocity.x = direction.x * speed
-			velocity.z = direction.z * speed
+	var target_velocity: Vector3 = direction * speed if direction else Vector3.ZERO
+
+	velocity.x = lerp(velocity.x, target_velocity.x, delta * 10)
+	velocity.z = lerp(velocity.z, target_velocity.z, delta * 10)
+
+	_handle_dash(delta)
+
+	for action in time_since_last_press.keys():
+		if Input.is_action_just_pressed(action):
+			time_since_last_press[action] = 0.0
 		else:
-			velocity.x = lerp(velocity.x, direction.x * speed, delta * 10)
-			velocity.z = lerp(velocity.z, direction.z * speed, delta * 10)
-	else:
-		velocity.x = lerpf(velocity.x, 0, delta * 10)
-		velocity.z = lerpf(velocity.z, 0, delta * 10)
+			time_since_last_press[action] += delta
 
 	t_bob += velocity.length() * float(is_on_floor()) * delta * 10
 	camera.transform.origin = _headbob(t_bob)
@@ -172,20 +179,9 @@ func get_input_vector() -> Vector2:
 	return Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 
 
-func _handle_sprinting(delta: float):
-	if (
-		Input.is_action_just_pressed("sprint")
-		or (
-			Input.is_action_just_pressed("move_forward")
-			and time_since_last_forward < max_sprint_press_delay
-		)
-	):
+func _handle_sprinting():
+	if Input.is_action_just_pressed("sprint"):
 		is_sprinting = true
-
-	if Input.is_action_just_pressed("move_forward"):
-		time_since_last_forward = 0.0
-	else:
-		time_since_last_forward += delta
 
 	if not Input.is_action_pressed("move_forward") or is_crouching:
 		is_sprinting = false
@@ -265,3 +261,28 @@ func _on_inventory_slot_clicked(slot_index: int, item: Item):
 	var prev_held_stack: Item = held_stack
 	held_stack = item
 	hotbar.set_item(slot_index, prev_held_stack)
+
+
+func _handle_dash(delta: float) -> void:
+	var direction: Vector3 = Vector3.ZERO
+	if (
+		Input.is_action_just_pressed("move_forward")
+		and time_since_last_press["move_forward"] < max_dash_press_delay
+	):
+		direction = -head.transform.basis.z.normalized()
+	elif (
+		Input.is_action_just_pressed("move_left")
+		and time_since_last_press["move_left"] < max_dash_press_delay
+	):
+		direction = -head.transform.basis.x.normalized()
+	elif (
+		Input.is_action_just_pressed("move_right")
+		and time_since_last_press["move_right"] < max_dash_press_delay
+	):
+		direction = head.transform.basis.x.normalized()
+
+	if current_dash_cooldown <= 0.0 and direction.length() > 0:
+		velocity += direction * DASH_VELOCITY
+		current_dash_cooldown = MAX_DASH_COOLDOWN
+	else:
+		current_dash_cooldown = max(current_dash_cooldown - delta, 0.0)

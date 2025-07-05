@@ -37,8 +37,8 @@ func set_item(slot: int, item: Item) -> bool:
 	if slot < 0 or slot >= len(items):
 		return false
 
-	if items[slot] and item and items[slot].name == item.name:
-		return items[slot].add_quantity(item.quantity)
+#	if items[slot] and item and items[slot].name == item.name:
+#		return items[slot].add_quantity(item.quantity)
 
 	items[slot] = item
 	item_added.emit(slot)

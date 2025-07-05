@@ -21,7 +21,7 @@ func _ready() -> void:
 	_setup_item_signal()
 
 
-func _setup_item_signal():
+func _setup_item_signal() -> void:
 	if not item:
 		_update_quantity_label()
 		return
@@ -30,6 +30,9 @@ func _setup_item_signal():
 
 
 func set_item(new_item: Item) -> void:
+	if item:
+		item.quantity_changed.disconnect(_update_quantity_label)
+
 	item = new_item
 	texture = INVENTORY_SLOT_NORMAL
 	item_texture.texture = item.icon if item else null

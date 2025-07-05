@@ -71,6 +71,15 @@ func set_item(slot_index: int, item: Item) -> void:
 		return
 
 
+func get_item(slot_index: int) -> Item:
+	if slot_index < 0 or slot_index >= inventory.get_size():
+		return null
+
+	var item_slot: InventorySlot = get_child(slot_index) as InventorySlot
+
+	return item_slot.item
+
+
 func _on_item_slot_pressed(item: Item, index: int) -> void:
 	slot_clicked.emit(index, item)
 	selected_slot = index

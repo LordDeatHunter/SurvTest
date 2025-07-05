@@ -68,7 +68,7 @@ var current_dash_cooldown: float = 0.0
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	hotbar.set_item(3, Items.example_item)
+	hotbar.set_item(3, Items.create_example_item())
 	hotbar.slot_clicked.connect(_on_hotbar_slot_clicked)
 	inventory.slot_clicked.connect(_on_inventory_slot_clicked)
 	inventory.hide()

@@ -37,9 +37,17 @@ func set_item(slot: int, item: Item) -> bool:
 	if slot < 0 or slot >= len(items):
 		return false
 
-#	if items[slot] and item and items[slot].name == item.name:
-#		return items[slot].add_quantity(item.quantity)
-
 	items[slot] = item
 	item_added.emit(slot)
 	return true
+
+
+func stack_item(slot: int, item: Item) -> bool:
+	if slot < 0 or slot >= len(items):
+		return false
+
+	var existing_item: Item = items[slot]
+	if not existing_item:
+		return set_item(slot, item)
+
+	return existing_item.stack_item(item)

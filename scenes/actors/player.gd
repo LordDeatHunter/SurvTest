@@ -44,14 +44,19 @@ var held_stack: Item = null:
 	get:
 		return held_stack
 	set(value):
+		if held_stack:
+			held_stack.quantity_changed.disconnect(_handle_stack_quantity_changed)
+
 		if value is Item:
 			held_stack = value
 			held_item_sprite.texture = held_stack.icon if held_stack.icon else null
 			held_item_node.visible = true
+			held_stack.quantity_changed.connect(_handle_stack_quantity_changed)
 		else:
 			held_stack = null
 			held_item_sprite.texture = null
 			held_item_node.visible = false
+
 var prev_collider: Object = null
 var current_dash_cooldown: float = 0.0
 
@@ -69,9 +74,14 @@ var current_dash_cooldown: float = 0.0
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	hotbar.set_item(3, Items.create_example_item())
-	hotbar.slot_clicked.connect(_on_hotbar_slot_clicked)
-	inventory.slot_clicked.connect(_on_inventory_slot_clicked)
+	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
+	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
 	inventory.hide()
+
+
+func _handle_stack_quantity_changed(amount: int):
+	if amount <= 0:
+		held_stack = null
 
 
 func _input(event):
@@ -263,16 +273,18 @@ func _handle_wall_sliding(delta: float) -> void:
 	velocity.y = lerp(velocity.y, -0.25, delta * 10)
 
 
-func _on_inventory_slot_clicked(slot_index: int, item: Item):
-	var prev_held_stack: Item = held_stack
-	held_stack = item
-	inventory.set_item(slot_index, prev_held_stack)
+func _handle_slot_clicked(slot_index: int, item: Item, inventory_ui: InventoryUi) -> void:
+	if item and not held_stack:
+		held_stack = item
+		inventory_ui.set_item(slot_index, null)
+		return
 
+	if not item and held_stack:
+		inventory_ui.set_item(slot_index, held_stack)
+		held_stack = null
+		return
 
-func _on_hotbar_slot_clicked(slot_index: int, item: Item):
-	var prev_held_stack: Item = held_stack
-	held_stack = item
-	hotbar.set_item(slot_index, prev_held_stack)
+	inventory_ui.slot_clicked_with_item(slot_index, held_stack)
 
 
 func _handle_dash(delta: float) -> void:

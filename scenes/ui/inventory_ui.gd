@@ -63,6 +63,10 @@ func _input(event: InputEvent) -> void:
 		selected_slot = (selected_slot + 1) % inventory.get_size()
 
 
+func slot_clicked_with_item(slot_index: int, item: Item) -> bool:
+	return inventory.stack_item(slot_index, item)
+
+
 func set_item(slot_index: int, item: Item) -> void:
 	if slot_index < 0 or slot_index >= inventory.get_size():
 		return

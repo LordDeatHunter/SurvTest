@@ -37,7 +37,24 @@ func add_quantity(amount: int) -> bool:
 
 
 func remove_quantity(amount: int) -> bool:
-	if quantity - amount < 0:
-		return false
+#	if quantity - amount < 0:
+#		return false
 	quantity -= amount
+	return true
+
+
+func stack_item(other_item: Item) -> bool:
+	if not other_item or self.name != other_item.name:
+		return false
+
+	if self.is_full():
+		return false
+
+	var amount_to_take: int = min(other_item.quantity, max_quantity - self.quantity)
+	if amount_to_take <= 0:
+		return false
+
+	self.add_quantity(amount_to_take)
+	other_item.remove_quantity(amount_to_take)
+
 	return true

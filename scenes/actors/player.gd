@@ -53,6 +53,7 @@ var current_dash_cooldown: float = 0.0
 @onready var held_item_node: Node2D = %HeldItem
 @onready var held_item_sprite: Sprite2D = %HeldItem/Sprite2D
 @onready var ray_cast: RayCast3D = %RayCast
+@onready var crosshair: TextureRect = %Crosshair
 
 
 func _ready():
@@ -75,9 +76,11 @@ func _input(event):
 	if event is InputEventKey and event.is_pressed() and event.keycode == KEY_TAB:
 		if mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
+			crosshair.hide()
 			inventory.show()
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+			crosshair.show()
 			inventory.hide()
 
 	elif (

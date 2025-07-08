@@ -1,7 +1,7 @@
 class_name InventoryUi
 extends GridContainer
 
-signal slot_clicked(slot_index: int, item: Item)
+signal slot_clicked(slot_index: int, stack: ItemStack)
 
 @export var inventory_size: int = 9
 
@@ -32,10 +32,11 @@ func _update_inventory():
 
 	for i in range(inventory.get_size()):
 		var item_slot: InventorySlot = item_template.instantiate()
+		item_slot.stack = inventory.items[i]
 		item_slot.item_click_pressed.connect(_on_item_slot_pressed.bind(i))
 
-		if inventory.items[i] is Item:
-			item_slot.set_item(inventory.items[i] as Item)
+		if not inventory.items[i].is_empty():
+			item_slot.set_item(inventory.items[i])
 
 		add_child(item_slot)
 
@@ -63,27 +64,24 @@ func _input(event: InputEvent) -> void:
 		selected_slot = (selected_slot + 1) % inventory.get_size()
 
 
-func slot_clicked_with_item(slot_index: int, item: Item) -> bool:
-	return inventory.stack_item(slot_index, item)
+func slot_clicked_with_stack(slot_index: int, stack: ItemStack) -> bool:
+	return inventory.stack_item(slot_index, stack)
 
 
-func set_item(slot_index: int, item: Item) -> void:
-	if slot_index < 0 or slot_index >= inventory.get_size():
-		return
-
-	if not inventory.set_item(slot_index, item):
-		return
+func set_item(slot_index: int, stack: ItemStack) -> void:
+	inventory.set_item(slot_index, stack)
 
 
-func get_item(slot_index: int) -> Item:
+func get_item(slot_index: int) -> ItemStack:
 	if slot_index < 0 or slot_index >= inventory.get_size():
 		return null
 
 	var item_slot: InventorySlot = get_child(slot_index) as InventorySlot
 
-	return item_slot.item
+	return item_slot.stack
 
 
-func _on_item_slot_pressed(item: Item, index: int) -> void:
-	slot_clicked.emit(index, item)
+func _on_item_slot_pressed(index: int) -> void:
+	var stack: ItemStack = inventory.items[index]
+	slot_clicked.emit(index, stack)
 	selected_slot = index

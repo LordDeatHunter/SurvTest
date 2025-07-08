@@ -40,23 +40,7 @@ var capsule_mesh: CapsuleMesh:
 			return null
 		return mesh_instance_3d.mesh as CapsuleMesh
 var is_crouching: bool = false
-var held_stack: Item = null:
-	get:
-		return held_stack
-	set(value):
-		if held_stack:
-			held_stack.quantity_changed.disconnect(_handle_stack_quantity_changed)
-
-		if value is Item:
-			held_stack = value
-			held_item_sprite.texture = held_stack.icon if held_stack.icon else null
-			held_item_node.visible = true
-			held_stack.quantity_changed.connect(_handle_stack_quantity_changed)
-		else:
-			held_stack = null
-			held_item_sprite.texture = null
-			held_item_node.visible = false
-
+var held_stack: ItemStack = ItemStack.new(null, 0)
 var prev_collider: Object = null
 var current_dash_cooldown: float = 0.0
 
@@ -73,15 +57,17 @@ var current_dash_cooldown: float = 0.0
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	hotbar.set_item(3, Items.create_example_item())
+	held_stack.item_changed.connect(_handle_held_item_changed)
+	hotbar.set_item(3, ItemStack.new(Items.example_item, 15))
+	hotbar.set_item(0, ItemStack.new(Items.example_item, 2))
+	hotbar.set_item(1, ItemStack.new(Items.example_item, 3))
 	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
 	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
 	inventory.hide()
 
 
-func _handle_stack_quantity_changed(amount: int):
-	if amount <= 0:
-		held_stack = null
+func _handle_held_item_changed():
+	held_item_sprite.texture = held_stack.item.icon if not held_stack.is_empty() else null
 
 
 func _input(event):
@@ -101,10 +87,10 @@ func _input(event):
 		and not hotbar.get_rect().has_point(event.position)
 		and not inventory.get_rect().has_point(event.position)
 	):
-		if held_stack and held_stack.quantity > 0:
+		if not held_stack.is_empty():
 			var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
 			dropped_item.setup(held_stack, position + Vector3(0, 0.5, 0))
-			held_stack = null
+			held_stack.item = null
 			get_parent().add_child.call_deferred(dropped_item)
 
 	if prev_collider and prev_collider is DroppedItem and Input.is_action_just_pressed("interact"):
@@ -273,18 +259,18 @@ func _handle_wall_sliding(delta: float) -> void:
 	velocity.y = lerp(velocity.y, -0.25, delta * 10)
 
 
-func _handle_slot_clicked(slot_index: int, item: Item, inventory_ui: InventoryUi) -> void:
-	if item and not held_stack:
-		held_stack = item
-		inventory_ui.set_item(slot_index, null)
+func _handle_slot_clicked(slot_index: int, stack: ItemStack, inventory_ui: InventoryUi) -> void:
+	if not stack.is_empty() and held_stack.is_empty():
+		held_stack.copy_from(stack)
+		inventory_ui.set_item(slot_index, ItemStack.new(null, 0))
 		return
 
-	if not item and held_stack:
+	if stack.is_empty() and not held_stack.is_empty():
 		inventory_ui.set_item(slot_index, held_stack)
-		held_stack = null
+		held_stack.item = null
 		return
 
-	inventory_ui.slot_clicked_with_item(slot_index, held_stack)
+	inventory_ui.slot_clicked_with_stack(slot_index, held_stack)
 
 
 func _handle_dash(delta: float) -> void:

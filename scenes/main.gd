@@ -19,7 +19,7 @@ func _ready():
 
 	for i in range(16):
 		var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
-		dropped_item.setup(Items.create_example_item(), player.position + Vector3(0, 2, 0))
+		dropped_item.setup(ItemStack.new(Items.example_item, 1), player.position + Vector3(0, 2, 0))
 		add_child(dropped_item)
 
 	_on_hide_patches_timeout()

@@ -3,51 +3,53 @@ extends Object
 
 signal item_added(slot: int)
 
-var items: Array[Item] = []
+var items: Array[ItemStack] = []
 
 
 func _init(size: int) -> void:
 	items = []
 	for i in range(size):
-		items.append(null)
+		items.append(ItemStack.new(null, 0))
 
 
 func get_size() -> int:
 	return len(items)
 
 
-func add_item(item: Item) -> bool:
-	if not item:
+func add_item(new_stack: ItemStack) -> bool:
+	if new_stack.is_empty():
 		return false
 
 	for i in range(len(items)):
-		if not items[i]:
-			items[i] = item
+		if items[i].is_empty():
+			items[i].copy_from(new_stack)
 			item_added.emit(i)
 			return true
 
-		if items[i].name == item.name and not items[i].is_full():
+		if items[i].item == new_stack.item and not items[i].is_full():
+			if not items[i].add_quantity(new_stack.quantity):
+				continue
 			item_added.emit(i)
-			return items[i].add_quantity(item.quantity)
+			return true
 
 	return false
 
 
-func set_item(slot: int, item: Item) -> bool:
+func set_item(slot: int, stack: ItemStack) -> bool:
 	if slot < 0 or slot >= len(items):
 		return false
 
-	items[slot] = item
+	items[slot].copy_from(stack)
 	item_added.emit(slot)
 	return true
 
 
-func stack_item(slot: int, item: Item) -> bool:
+func stack_item(slot: int, stack: ItemStack) -> bool:
 	if slot < 0 or slot >= len(items):
 		return false
 
-	var existing_item: Item = items[slot]
-	if not existing_item:
-		return set_item(slot, item)
+	var existing_item: ItemStack = items[slot]
+	if existing_item.is_empty():
+		return set_item(slot, stack)
 
-	return existing_item.stack_item(item)
+	return existing_item.stack_item(stack)

@@ -1,7 +1,8 @@
-[gd_scene load_steps=5 format=3 uid="uid://b5rkalf5fpin6"]
+[gd_scene load_steps=6 format=3 uid="uid://b5rkalf5fpin6"]
 
 [ext_resource type="Script" uid="uid://d0r4i8b8pntni" path="res://scenes/actors/player.gd" id="1_utxda"]
 [ext_resource type="PackedScene" uid="uid://se60aaxu64dc" path="res://scenes/ui/inventory_ui.tscn" id="2_ru62r"]
+[ext_resource type="Texture2D" uid="uid://fgotj5h2p4fd" path="res://assets/textures/crosshair.png" id="3_ktjr4"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_p2cts"]
 
@@ -54,6 +55,12 @@ layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 8
 columns = 9
+
+[node name="TextureRect" type="TextureRect" parent="MarginContainer"]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+texture = ExtResource("3_ktjr4")
 
 [node name="HeldItem" type="Node2D" parent="."]
 unique_name_in_owner = true

@@ -2,7 +2,7 @@ class_name ItemStack
 extends Object
 
 signal quantity_changed(amount: int)
-signal item_changed
+signal item_changed(item: Item)
 
 var quantity: int:
 	get:
@@ -27,7 +27,7 @@ var item: Item:
 		_item = value
 		if not _item:
 			_quantity = 0
-		item_changed.emit()
+		item_changed.emit(_item)
 
 var _quantity: int = 1
 var _item: Item = null
@@ -87,4 +87,4 @@ func copy_from(other_stack: ItemStack) -> void:
 	_item = other_stack.item
 	_quantity = other_stack.quantity
 	quantity_changed.emit(_quantity)
-	item_changed.emit()
+	item_changed.emit(_item)

@@ -19,13 +19,16 @@ func _ready() -> void:
 	mouse_entered.connect(select.bind(false))
 	mouse_exited.connect(deselect.bind(false))
 	stack.quantity_changed.connect(_update_quantity_label)
+	stack.item_changed.connect(_update_item)
 	_update_quantity_label(stack.quantity)
+
+
+func _update_item(item: Item) -> void:
+	item_texture.texture = item.icon if not stack.is_empty() else null
 
 
 func set_item(new_stack: ItemStack) -> void:
 	stack.copy_from(new_stack)
-	texture = INVENTORY_SLOT_NORMAL
-	item_texture.texture = stack.item.icon if not stack.is_empty() else null
 
 
 func deselect(set_value: bool = true) -> void:

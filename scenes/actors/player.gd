@@ -59,16 +59,16 @@ var current_dash_cooldown: float = 0.0
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	held_stack.item_changed.connect(_handle_held_item_changed)
-	hotbar.set_item(3, ItemStack.new(Items.example_item, 15))
-	hotbar.set_item(0, ItemStack.new(Items.example_item, 2))
-	hotbar.set_item(1, ItemStack.new(Items.example_item, 3))
+	hotbar.inventory.set_item(3, ItemStack.new(Items.example_item, 15))
+	hotbar.inventory.set_item(0, ItemStack.new(Items.example_item, 2))
+	hotbar.inventory.set_item(1, ItemStack.new(Items.example_item, 3))
 	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
 	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
 	inventory.hide()
 
 
-func _handle_held_item_changed():
-	held_item_sprite.texture = held_stack.item.icon if not held_stack.is_empty() else null
+func _handle_held_item_changed(item: Item) -> void:
+	held_item_sprite.texture = item.icon if not held_stack.is_empty() else null
 
 
 func _input(event):
@@ -279,31 +279,35 @@ func _handle_slot_clicked(
 func _handle_slot_lclicked(slot_index: int, stack: ItemStack, inventory_ui: InventoryUi) -> void:
 	if not stack.is_empty() and held_stack.is_empty():
 		held_stack.copy_from(stack)
-		inventory_ui.set_item(slot_index, ItemStack.new(null, 0))
+		inventory_ui.inventory.set_item(slot_index, ItemStack.new(null, 0))
 		return
 
 	if stack.is_empty() and not held_stack.is_empty():
-		inventory_ui.set_item(slot_index, held_stack)
+		inventory_ui.inventory.set_item(slot_index, held_stack)
 		held_stack.item = null
 		return
 
-	inventory_ui.slot_clicked_with_stack(slot_index, held_stack)
+	inventory_ui.inventory.stack_item(slot_index, held_stack)
 
 
 func _handle_slot_rclicked(slot_index: int, stack: ItemStack, inventory_ui: InventoryUi) -> void:
 	if not stack.is_empty() and held_stack.is_empty():
-		var half_quantity: int = floor(stack.quantity / 2)
+		var half_quantity: int = floor(stack.quantity / 2.0)
 		held_stack.copy_from(ItemStack.new(stack.item, half_quantity))
-		inventory_ui.set_item(slot_index, ItemStack.new(stack.item, stack.quantity - half_quantity))
+		inventory_ui.inventory.set_item(
+			slot_index, ItemStack.new(stack.item, stack.quantity - half_quantity)
+		)
 		return
 
 	if stack.is_empty() and not held_stack.is_empty():
-		inventory_ui.set_item(slot_index, ItemStack.new(held_stack.item, 1))
+		inventory_ui.inventory.set_item(slot_index, ItemStack.new(held_stack.item, 1))
 		held_stack.remove_quantity(1)
 		return
 
 	if not stack.is_empty() and not stack.is_full() and not held_stack.is_empty():
-		inventory_ui.set_item(slot_index, ItemStack.new(held_stack.item, stack.quantity + 1))
+		inventory_ui.inventory.set_item(
+			slot_index, ItemStack.new(held_stack.item, stack.quantity + 1)
+		)
 		held_stack.remove_quantity(1)
 		return
 

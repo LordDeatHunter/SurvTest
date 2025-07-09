@@ -72,6 +72,14 @@ func set_item(slot_index: int, stack: ItemStack) -> void:
 	inventory.set_item(slot_index, stack)
 
 
+func remove_quantity(slot_index: int, amount: int) -> void:
+	if slot_index < 0 or slot_index >= inventory.get_size():
+		return
+
+	var item_slot: InventorySlot = get_child(slot_index) as InventorySlot
+	item_slot.stack.remove_quantity(amount)
+
+
 func get_item(slot_index: int) -> ItemStack:
 	if slot_index < 0 or slot_index >= inventory.get_size():
 		return null
@@ -81,7 +89,7 @@ func get_item(slot_index: int) -> ItemStack:
 	return item_slot.stack
 
 
-func _on_item_slot_pressed(index: int) -> void:
+func _on_item_slot_pressed(button_index: int, index: int) -> void:
 	var stack: ItemStack = inventory.items[index]
-	slot_clicked.emit(index, stack)
+	slot_clicked.emit(button_index, index, stack)
 	selected_slot = index

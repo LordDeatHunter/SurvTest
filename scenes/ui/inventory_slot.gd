@@ -1,8 +1,8 @@
 class_name InventorySlot
 extends TextureRect
 
-signal item_click_pressed
-signal item_click_released
+signal item_click_pressed(button_index: int)
+signal item_click_released(button_index: int)
 
 const INVENTORY_SLOT_DOWN = preload("res://assets/textures/ui/inventory_slot_down.png")
 const INVENTORY_SLOT_NORMAL = preload("res://assets/textures/ui/inventory_slot_normal.png")
@@ -42,11 +42,11 @@ func select(set_value: bool = true) -> void:
 
 
 func _gui_input(event: InputEvent) -> void:
-	if event is InputEventMouseButton and event.button_index == MOUSE_BUTTON_LEFT:
+	if event is InputEventMouseButton:
 		if event.is_pressed():
-			item_click_pressed.emit()
+			item_click_pressed.emit(event.button_index)
 		else:
-			item_click_released.emit()
+			item_click_released.emit(event.button_index)
 
 
 func _update_quantity_label(amount: int = 0) -> void:

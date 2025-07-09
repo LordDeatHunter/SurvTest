@@ -262,7 +262,16 @@ func _handle_wall_sliding(delta: float) -> void:
 	velocity.y = lerp(velocity.y, -0.25, delta * 10)
 
 
-func _handle_slot_clicked(slot_index: int, stack: ItemStack, inventory_ui: InventoryUi) -> void:
+func _handle_slot_clicked(
+	button_index: int, slot_index: int, stack: ItemStack, inventory_ui: InventoryUi
+) -> void:
+	if button_index == MOUSE_BUTTON_LEFT:
+		_handle_slot_lclicked(slot_index, stack, inventory_ui)
+	elif button_index == MOUSE_BUTTON_RIGHT:
+		_handle_slot_rclicked(slot_index, stack, inventory_ui)
+
+
+func _handle_slot_lclicked(slot_index: int, stack: ItemStack, inventory_ui: InventoryUi) -> void:
 	if not stack.is_empty() and held_stack.is_empty():
 		held_stack.copy_from(stack)
 		inventory_ui.set_item(slot_index, ItemStack.new(null, 0))
@@ -274,6 +283,24 @@ func _handle_slot_clicked(slot_index: int, stack: ItemStack, inventory_ui: Inven
 		return
 
 	inventory_ui.slot_clicked_with_stack(slot_index, held_stack)
+
+
+func _handle_slot_rclicked(slot_index: int, stack: ItemStack, inventory_ui: InventoryUi) -> void:
+	if not stack.is_empty() and held_stack.is_empty():
+		var half_quantity: int = floor(stack.quantity / 2)
+		held_stack.copy_from(ItemStack.new(stack.item, half_quantity))
+		inventory_ui.set_item(slot_index, ItemStack.new(stack.item, stack.quantity - half_quantity))
+		return
+
+	if stack.is_empty() and not held_stack.is_empty():
+		inventory_ui.set_item(slot_index, ItemStack.new(held_stack.item, 1))
+		held_stack.remove_quantity(1)
+		return
+
+	if not stack.is_empty() and not stack.is_full() and not held_stack.is_empty():
+		inventory_ui.set_item(slot_index, ItemStack.new(held_stack.item, stack.quantity + 1))
+		held_stack.remove_quantity(1)
+		return
 
 
 func _handle_dash(delta: float) -> void:

@@ -1,8 +1,6 @@
 class_name Inventory
 extends Object
 
-signal item_added(slot: int)
-
 var items: Array[ItemStack] = []
 
 
@@ -23,13 +21,13 @@ func add_item(new_stack: ItemStack) -> bool:
 	for i in range(len(items)):
 		if items[i].is_empty():
 			items[i].copy_from(new_stack)
-			item_added.emit(i)
 			return true
 
-		if items[i].item == new_stack.item and not items[i].is_full():
-			if not items[i].add_quantity(new_stack.quantity):
-				continue
-			item_added.emit(i)
+		if (
+			items[i].item == new_stack.item
+			and not items[i].is_full()
+			and items[i].add_quantity(new_stack.quantity)
+		):
 			return true
 
 	return false
@@ -40,7 +38,6 @@ func set_item(slot: int, stack: ItemStack) -> bool:
 		return false
 
 	items[slot].copy_from(stack)
-	item_added.emit(slot)
 	return true
 
 

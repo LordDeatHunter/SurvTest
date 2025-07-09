@@ -86,14 +86,18 @@ func _input(event):
 	elif (
 		event is InputEventMouseButton
 		and mouse_mode == Input.MOUSE_MODE_VISIBLE
-		and event.button_index == MOUSE_BUTTON_LEFT
+		and event.is_pressed()
+		and (event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_RIGHT)
 		and not hotbar.get_rect().has_point(event.position)
 		and not inventory.get_rect().has_point(event.position)
 	):
 		if not held_stack.is_empty():
+			var amount: int = held_stack.quantity if event.button_index == MOUSE_BUTTON_LEFT else 1
 			var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
-			dropped_item.setup(held_stack, position + Vector3(0, 0.5, 0))
-			held_stack.item = null
+			dropped_item.setup(
+				ItemStack.new(held_stack.item, amount), position + Vector3(0, 0.5, 0)
+			)
+			held_stack.remove_quantity(amount)
 			get_parent().add_child.call_deferred(dropped_item)
 
 	if prev_collider and prev_collider is DroppedItem and Input.is_action_just_pressed("interact"):

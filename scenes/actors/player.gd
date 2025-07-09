@@ -28,7 +28,7 @@ var is_sprinting: bool = false
 var time_since_last_press: Dictionary[String, float] = {
 	"move_forward": 1.0, "move_left": 1.0, "move_right": 1.0
 }
-var max_dash_press_delay: float = 0.5
+var max_dash_press_delay: float = 0.2
 var collision_capsule_shape: CapsuleShape3D:
 	get:
 		if not collision_shape_3d.shape:

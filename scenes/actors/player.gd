@@ -94,9 +94,10 @@ func _input(event):
 		if not held_stack.is_empty():
 			var amount: int = held_stack.quantity if event.button_index == MOUSE_BUTTON_LEFT else 1
 			var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
-			dropped_item.setup(
-				ItemStack.new(held_stack.item, amount), position + Vector3(0, 0.5, 0)
+			var drop_position: Vector3 = (
+				head.global_transform.origin + -head.global_transform.basis.z * 0.5
 			)
+			dropped_item.setup(ItemStack.new(held_stack.item, amount), drop_position)
 			held_stack.remove_quantity(amount)
 			get_parent().add_child.call_deferred(dropped_item)
 

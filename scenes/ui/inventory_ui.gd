@@ -41,22 +41,11 @@ func _init_inventory():
 		add_child(item_slot)
 
 
-func _input(event: InputEvent) -> void:
-	if (
-		event is InputEventMouseButton
-		and event.button_index == MOUSE_BUTTON_WHEEL_UP
-		and event.is_pressed()
-	):
-		selected_slot = (selected_slot - 1 + inventory.get_size()) % inventory.get_size()
-	elif (
-		event is InputEventMouseButton
-		and event.button_index == MOUSE_BUTTON_WHEEL_DOWN
-		and event.is_pressed()
-	):
-		selected_slot = (selected_slot + 1) % inventory.get_size()
-
-
 func _on_item_slot_pressed(button_index: int, index: int) -> void:
 	var stack: ItemStack = inventory.items[index]
 	slot_clicked.emit(button_index, index, stack)
 	selected_slot = index
+
+
+func increment_selected_slot(amount: int) -> void:
+	selected_slot = (selected_slot + amount + inventory.get_size()) % inventory.get_size()

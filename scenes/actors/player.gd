@@ -105,6 +105,16 @@ func _input(event):
 		var dropped_item: DroppedItem = prev_collider as DroppedItem
 		dropped_item.try_pick_up(hotbar.inventory)
 
+	if (
+		event is InputEventMouseButton
+		and (
+			event.button_index == MOUSE_BUTTON_WHEEL_UP
+			or event.button_index == MOUSE_BUTTON_WHEEL_DOWN
+		)
+		and event.is_pressed()
+	):
+		hotbar.increment_selected_slot(1 if event.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1)
+
 
 func _unhandled_input(event):
 	var mouse_mode: int = Input.get_mouse_mode()

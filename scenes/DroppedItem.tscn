@@ -1,7 +1,19 @@
-[gd_scene load_steps=7 format=3 uid="uid://bmljo7ct4w00e"]
+[gd_scene load_steps=11 format=3 uid="uid://bmljo7ct4w00e"]
 
 [ext_resource type="Script" uid="uid://bkgcs3yh3hn6m" path="res://scenes/dropped_item.gd" id="1_ip0rf"]
+[ext_resource type="Shader" uid="uid://bsyhsiqenw1ax" path="res://assets/LootDropShader.tres" id="2_xr8br"]
+[ext_resource type="Texture2D" uid="uid://buu18saluhv67" path="res://assets/LootGlow.png" id="3_hoqjr"]
 [ext_resource type="Script" uid="uid://bmcr7awumk7oi" path="res://scenes/dropped_item_visual_area.gd" id="4_hoqjr"]
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_1jlw8"]
+render_priority = 0
+shader = ExtResource("2_xr8br")
+shader_parameter/ColorParameter = Color(0.556086, 0.946122, 0.271396, 1)
+shader_parameter/Texture2DParameter = ExtResource("3_hoqjr")
+
+[sub_resource type="QuadMesh" id="QuadMesh_5hp2e"]
+size = Vector2(1.5, 3)
+center_offset = Vector3(0, 1.5, 0)
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_hptdf"]
 size = Vector3(0.4, 0.4, 0.4)
@@ -20,6 +32,11 @@ size = Vector3(0.4, 0.4, 0.4)
 
 [node name="DroppedItem" type="Node3D"]
 script = ExtResource("1_ip0rf")
+
+[node name="LootMesh" type="MeshInstance3D" parent="."]
+material_override = SubResource("ShaderMaterial_1jlw8")
+mesh = SubResource("QuadMesh_5hp2e")
+skeleton = NodePath("../RigidBody")
 
 [node name="RigidBody" type="RigidBody3D" parent="."]
 collision_layer = 2
@@ -41,6 +58,11 @@ unique_name_in_owner = true
 layers = 3
 mesh = SubResource("BoxMesh_xr8br")
 skeleton = NodePath("../..")
+
+[node name="RemoteTransform3D" type="RemoteTransform3D" parent="RigidBody/VisualArea/MainMesh"]
+remote_path = NodePath("../../../../LootMesh")
+update_rotation = false
+update_scale = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="RigidBody/VisualArea"]
 shape = SubResource("BoxShape3D_xr8br")

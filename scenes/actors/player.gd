@@ -101,8 +101,13 @@ func _input(event):
 			held_stack.remove_quantity(amount)
 			get_parent().add_child.call_deferred(dropped_item)
 
-	if prev_collider and prev_collider is DroppedItem and Input.is_action_just_pressed("interact"):
-		var dropped_item: DroppedItem = prev_collider as DroppedItem
+	if (
+		prev_collider
+		and prev_collider is DroppedItemVisualArea
+		and Input.is_action_just_pressed("interact")
+	):
+		var dropped_item_visual: DroppedItemVisualArea = prev_collider as DroppedItemVisualArea
+		var dropped_item: DroppedItem = dropped_item_visual.dropped_item
 		dropped_item.try_pick_up(hotbar.inventory)
 
 	if (
@@ -173,12 +178,12 @@ func _process(_delta: float) -> void:
 	if result == prev_collider:
 		return
 
-	if prev_collider and prev_collider is DroppedItem:
-		var prev_dropped_item: DroppedItem = prev_collider as DroppedItem
+	if prev_collider and prev_collider is DroppedItemVisualArea:
+		var prev_dropped_item: DroppedItemVisualArea = prev_collider as DroppedItemVisualArea
 		prev_dropped_item.set_highlighted(false)
 
-	if result and result is DroppedItem:
-		var dropped_item: DroppedItem = result as DroppedItem
+	if result and result is DroppedItemVisualArea:
+		var dropped_item: DroppedItemVisualArea = result as DroppedItemVisualArea
 		dropped_item.set_highlighted(true)
 
 	prev_collider = result

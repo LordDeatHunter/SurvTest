@@ -16,21 +16,20 @@ func get_size() -> int:
 
 func add_item(new_stack: ItemStack) -> bool:
 	if new_stack.is_empty():
-		return false
+		return true
 
-	for i in range(len(items)):
+	var i: int = 0
+	while not new_stack.is_empty() and i < len(items):
 		if items[i].is_empty():
 			items[i].copy_from(new_stack)
-			return true
+			new_stack.remove_quantity(new_stack.quantity)
+			break
 
-		if (
-			items[i].item == new_stack.item
-			and not items[i].is_full()
-			and items[i].add_quantity(new_stack.quantity)
-		):
-			return true
+		items[i].stack_item(new_stack)
 
-	return false
+		i += 1
+
+	return new_stack.is_empty()
 
 
 func set_item(slot: int, stack: ItemStack) -> bool:

@@ -17,9 +17,12 @@ func _ready():
 			grass_patch.position = Vector3(x * 20, 0, z * 20)
 			grass_patches.add_child(grass_patch)
 
-	for i in range(16):
+	for i in range(32):
+		var amount: int = randi_range(1, 99)
 		var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
-		dropped_item.setup(ItemStack.new(Items.example_item, 1), player.position + Vector3(0, 2, 0))
+		dropped_item.setup(
+			ItemStack.new(Items.example_item, amount), player.position + Vector3(0, 2, 0)
+		)
 		add_child(dropped_item)
 
 	_on_hide_patches_timeout()

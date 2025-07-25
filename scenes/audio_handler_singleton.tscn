@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://ckncojhghccp2"]
+
+[ext_resource type="Script" uid="uid://diw5qd3ypa2in" path="res://state/audio_handler_singleton.gd" id="1_fne02"]
+
+[node name="AudioHandlerSingleton" type="Node"]
+script = ExtResource("1_fne02")

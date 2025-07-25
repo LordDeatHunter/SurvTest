@@ -227,6 +227,7 @@ func _handle_jumping():
 
 		if not is_on_floor() and not is_on_wall():
 			current_multijumps += 1
+			AudioHandlerSingleton.play_sound("poof")
 
 
 func _get_max_standing_height() -> float:

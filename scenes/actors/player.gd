@@ -205,10 +205,10 @@ func get_input_vector() -> Vector2:
 
 
 func _handle_sprinting():
-	if Input.is_action_just_pressed("sprint"):
+	if Input.is_action_pressed("sprint"):
 		is_sprinting = true
 
-	if not Input.is_action_pressed("move_forward") or is_crouching:
+	if not Input.is_action_pressed("move_forward") or is_crouching or is_on_wall_only():
 		is_sprinting = false
 
 

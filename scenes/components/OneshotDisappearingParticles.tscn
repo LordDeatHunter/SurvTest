@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://bg5deu6dequwb"]
+
+[ext_resource type="Script" uid="uid://btcaq5hvdre83" path="res://scenes/components/oneshot_disappearing_particles.gd" id="1_hk00r"]
+
+[node name="OneshotDisappearingParticles" type="Node3D"]
+script = ExtResource("1_hk00r")

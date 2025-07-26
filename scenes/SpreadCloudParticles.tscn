@@ -1,0 +1,39 @@
+[gd_scene load_steps=6 format=3 uid="uid://kl0lwc5c1b31"]
+
+[ext_resource type="PackedScene" uid="uid://bg5deu6dequwb" path="res://scenes/components/OneshotDisappearingParticles.tscn" id="1_oe6cd"]
+
+[sub_resource type="Curve" id="Curve_ixb66"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_oe6cd"]
+curve = SubResource("Curve_ixb66")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_ixb66"]
+spread = 180.0
+flatness = 0.95
+initial_velocity_min = 10.0
+initial_velocity_max = 20.0
+gravity = Vector3(0, 0, 0)
+damping_min = 40.0
+damping_max = 80.0
+scale_min = 0.8
+scale_max = 1.2
+scale_curve = SubResource("CurveTexture_oe6cd")
+collision_mode = 2
+
+[sub_resource type="SphereMesh" id="SphereMesh_oe6cd"]
+radius = 0.2
+height = 0.4
+
+[node name="SpreadCloudParticles" type="GPUParticles3D"]
+emitting = false
+amount = 256
+lifetime = 0.5
+one_shot = true
+explosiveness = 0.9
+local_coords = true
+process_material = SubResource("ParticleProcessMaterial_ixb66")
+draw_pass_1 = SubResource("SphereMesh_oe6cd")
+
+[node name="OneshotDisappearingParticles" parent="." instance=ExtResource("1_oe6cd")]

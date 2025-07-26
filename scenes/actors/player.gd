@@ -228,6 +228,9 @@ func _handle_jumping():
 		if not is_on_floor() and not is_on_wall():
 			current_multijumps += 1
 			AudioHandlerSingleton.play_sound("poof")
+			var cloud_particles: Node = Imports.SPREAD_CLOUD_PARTICLES.instantiate()
+			cloud_particles.position = position
+			get_parent().add_child.call_deferred(cloud_particles)
 
 
 func _get_max_standing_height() -> float:

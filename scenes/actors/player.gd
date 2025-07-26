@@ -108,7 +108,7 @@ func _input(event):
 	):
 		var dropped_item_visual: DroppedItemVisualArea = prev_collider as DroppedItemVisualArea
 		var dropped_item: DroppedItem = dropped_item_visual.dropped_item
-		dropped_item.try_pick_up(hotbar.inventory)
+		dropped_item.try_pick_up([hotbar.inventory, inventory.inventory])
 
 	if (
 		event is InputEventMouseButton

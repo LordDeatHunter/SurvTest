@@ -9,8 +9,10 @@ func setup(item_stack: ItemStack, spawn_position: Vector3 = Vector3.ZERO) -> voi
 	position = spawn_position
 
 
-func try_pick_up(inventory: Inventory) -> void:
-	inventory.add_item(stack)
+func try_pick_up(inventories: Array[Inventory]) -> void:
+	for inventory in inventories:
+		inventory.add_item(stack)
 
-	if stack.is_empty():
-		queue_free()
+		if stack.is_empty():
+			queue_free()
+			break

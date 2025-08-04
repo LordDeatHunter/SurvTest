@@ -20,8 +20,10 @@ func _ready():
 	for i in range(32):
 		var amount: int = randi_range(1, 99)
 		var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
+		var rng: bool = randi() % 2 == 0
 		dropped_item.setup(
-			ItemStack.new(Items.example_item, amount), player.position + Vector3(0, 2, 0)
+			ItemStack.new(Items.example_item_1 if rng else Items.example_item_2, amount),
+			player.position + Vector3(0, 2, 0)
 		)
 		add_child(dropped_item)
 

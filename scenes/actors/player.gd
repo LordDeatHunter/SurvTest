@@ -21,6 +21,7 @@ const MAX_DASH_COOLDOWN: float = 1.0
 const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/DroppedItem.tscn")
 
 @export var max_multijumps: int = 0
+
 var t_bob: int = 0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
 var current_multijumps: int = 0
@@ -59,9 +60,9 @@ var current_dash_cooldown: float = 0.0
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	held_stack.item_changed.connect(_handle_held_item_changed)
-	hotbar.inventory.set_item(3, ItemStack.new(Items.example_item, 15))
-	hotbar.inventory.set_item(0, ItemStack.new(Items.example_item, 2))
-	hotbar.inventory.set_item(1, ItemStack.new(Items.example_item, 3))
+	hotbar.inventory.set_item(3, ItemStack.new(Items.example_item_2, 15))
+	hotbar.inventory.set_item(0, ItemStack.new(Items.example_item_1, 2))
+	hotbar.inventory.set_item(1, ItemStack.new(Items.example_item_1, 3))
 	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
 	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
 	inventory.hide()

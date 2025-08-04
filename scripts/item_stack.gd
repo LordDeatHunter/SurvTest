@@ -68,7 +68,10 @@ func stack_item(other_stack: ItemStack) -> bool:
 		return false
 
 	if item != other_stack.item:
-		return false
+		var temp_stack: ItemStack = ItemStack.new(other_stack.item, other_stack.quantity)
+		other_stack.copy_from(self)
+		self.copy_from(temp_stack)
+		return true
 
 	if self.is_full():
 		return false

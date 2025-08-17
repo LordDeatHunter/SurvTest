@@ -10,10 +10,10 @@ var quantity: int:
 	set(value):
 		if _quantity == value:
 			return
-		_quantity = value
 
-		if _quantity <= 0:
-			_quantity = 0
+		_quantity = clamp(value, 0, item.max_quantity if item else 0)
+
+		if _quantity == 0:
 			item = null
 
 		quantity_changed.emit(_quantity)

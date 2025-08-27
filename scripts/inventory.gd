@@ -1,17 +1,15 @@
 class_name Inventory
 extends Object
 
-var items: Array[ItemStack] = []
+var slots: Array[Slot] = []
+var size: int
 
 
-func _init(size: int) -> void:
-	items = []
+func _init(init_size: int) -> void:
+	size = init_size
+	slots = []
 	for i in range(size):
-		items.append(ItemStack.new(null, 0))
-
-
-func get_size() -> int:
-	return len(items)
+		slots.append(Slot.new())
 
 
 func add_item(new_stack: ItemStack) -> bool:
@@ -19,33 +17,48 @@ func add_item(new_stack: ItemStack) -> bool:
 		return true
 
 	var i: int = 0
-	while not new_stack.is_empty() and i < len(items):
-		if items[i].is_empty():
-			items[i].copy_from(new_stack)
-			new_stack.remove_quantity(new_stack.quantity)
-			break
-
-		items[i].stack_item(new_stack)
-
+	while new_stack.has_item() and i < size:
+		stack_item(i, new_stack)
 		i += 1
 
 	return new_stack.is_empty()
 
 
-func set_item(slot: int, stack: ItemStack) -> bool:
-	if slot < 0 or slot >= len(items):
+func is_slot_in_bounds(slot: int) -> bool:
+	return slot >= 0 and slot < size
+
+
+func set_item(slot: int, stack: ItemStack, remove_from_stack: bool = true) -> bool:
+	if not is_slot_in_bounds(slot):
 		return false
 
-	items[slot].copy_from(stack)
+	if slots[slot].copy_from(stack):
+		return false
+
+	if remove_from_stack:
+		stack.clear()
+
 	return true
 
 
-func stack_item(slot: int, stack: ItemStack) -> bool:
-	if slot < 0 or slot >= len(items):
+func stack_item(slot: int, stack: ItemStack, remove_from_stack: bool = true) -> bool:
+	if not is_slot_in_bounds(slot):
 		return false
 
-	var existing_item: ItemStack = items[slot]
-	if existing_item.is_empty():
-		return set_item(slot, stack)
+	var existing_slot: Slot = slots[slot]
+	if existing_slot.stack.is_empty():
+		return set_item(slot, stack, remove_from_stack)
 
-	return existing_item.stack_item(stack)
+	return existing_slot.stack.stack_item(stack)
+
+
+func swap_slots(slot_index: int, other_slot: Slot) -> bool:
+	if not is_slot_in_bounds(slot_index):
+		return false
+
+	var slot: Slot = slots[slot_index]
+	if slot.item_type != other_slot.item_type:
+		return false
+
+	slot.swap_slots(other_slot)
+	return true

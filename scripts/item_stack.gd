@@ -2,7 +2,6 @@ class_name ItemStack
 extends Object
 
 signal quantity_changed(amount: int)
-signal item_changed(item: Item)
 
 var quantity: int:
 	get:
@@ -13,24 +12,13 @@ var quantity: int:
 
 		_quantity = clamp(value, 0, item.max_quantity if item else 0)
 
-		if _quantity == 0:
-			item = null
-
 		quantity_changed.emit(_quantity)
 
-var item: Item:
+var item_type: Item.ItemType:
 	get:
-		return _item
-	set(value):
-		if _item == value:
-			return
-		_item = value
-		if not _item:
-			_quantity = 0
-		item_changed.emit(_item)
-
+		return item.item_type
+var item: Item
 var _quantity: int = 1
-var _item: Item = null
 
 
 func _init(initial_item: Item, amount: int) -> void:
@@ -38,8 +26,25 @@ func _init(initial_item: Item, amount: int) -> void:
 	quantity = amount
 
 
+func copy() -> ItemStack:
+	var new_stack: ItemStack = ItemStack.new(item, quantity)
+	return new_stack
+
+
 func is_full() -> bool:
-	return item and quantity >= item.max_quantity
+	return quantity >= item.max_quantity
+
+
+func is_empty() -> bool:
+	return quantity <= 0
+
+
+func has_item() -> bool:
+	return quantity > 0
+
+
+func clear() -> void:
+	quantity = 0
 
 
 func add_quantity(amount: int) -> bool:
@@ -59,19 +64,12 @@ func remove_quantity(amount: int) -> bool:
 	return true
 
 
-func is_empty() -> bool:
-	return not item or quantity <= 0
-
-
-func stack_item(other_stack: ItemStack) -> bool:
-	if other_stack.is_empty() or is_empty():
+func stack_item(other_stack: ItemStack, remove_from_stack: bool = true) -> bool:
+	if is_empty() or other_stack.is_empty():
 		return false
 
 	if item != other_stack.item:
-		var temp_stack: ItemStack = ItemStack.new(other_stack.item, other_stack.quantity)
-		other_stack.copy_from(self)
-		self.copy_from(temp_stack)
-		return true
+		return false
 
 	if self.is_full():
 		return false
@@ -81,13 +79,7 @@ func stack_item(other_stack: ItemStack) -> bool:
 		return false
 
 	self.add_quantity(amount_to_take)
-	other_stack.remove_quantity(amount_to_take)
+	if remove_from_stack:
+		other_stack.remove_quantity(amount_to_take)
 
 	return true
-
-
-func copy_from(other_stack: ItemStack) -> void:
-	_item = other_stack.item
-	_quantity = other_stack.quantity
-	quantity_changed.emit(_quantity)
-	item_changed.emit(_item)

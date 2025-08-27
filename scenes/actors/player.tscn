@@ -49,13 +49,24 @@ size_flags_horizontal = 4
 size_flags_vertical = 4
 texture = ExtResource("3_ktjr4")
 
-[node name="InventoryUi" parent="MarginContainer" instance=ExtResource("2_ru62r")]
+[node name="HBoxContainer" type="HBoxContainer" parent="MarginContainer"]
+layout_mode = 2
+alignment = 1
+
+[node name="InventoryUi" parent="MarginContainer/HBoxContainer" instance=ExtResource("2_ru62r")]
 unique_name_in_owner = true
 layout_mode = 2
 size_flags_horizontal = 4
 size_flags_vertical = 4
 columns = 9
 inventory_size = 27
+
+[node name="AccessoryUi" parent="MarginContainer/HBoxContainer" instance=ExtResource("2_ru62r")]
+unique_name_in_owner = true
+layout_mode = 2
+size_flags_vertical = 4
+columns = 2
+inventory_size = 6
 
 [node name="HotbarUi" parent="MarginContainer" instance=ExtResource("2_ru62r")]
 unique_name_in_owner = true

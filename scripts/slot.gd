@@ -17,8 +17,9 @@ var stack: ItemStack:
 			stack.quantity_changed.disconnect(_update_stack_quantity)
 		else:
 			_stack.quantity_changed.connect(_update_stack_quantity)
+
 		item_changed.emit(_stack)
-		_update_stack_quantity(_stack.quantity)
+		quantity_changed.emit(_stack.quantity)
 
 var item_type: Item.ItemType
 var _stack: ItemStack = ItemStack.empty
@@ -56,7 +57,16 @@ func copy_from(other_stack: ItemStack) -> bool:
 
 
 func swap_slots(other_slot: Slot) -> bool:
-	if item_type != other_slot.item_type:
+	if is_empty() and other_slot.is_empty():
+		return true
+
+	if is_empty() and other_slot.has_item():
+		return other_slot.swap_slots(self)
+
+	if has_item() and other_slot.has_item() and item_type != other_slot.item_type:
+		return false
+
+	if has_item() and other_slot.is_empty() and other_slot.item_type != Item.ItemType.GENERIC:
 		return false
 
 	var temp_stack: ItemStack = stack

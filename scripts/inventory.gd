@@ -45,6 +45,9 @@ func stack_item(slot: int, stack: ItemStack, remove_from_stack: bool = true) -> 
 	if not is_slot_in_bounds(slot):
 		return false
 
+	if stack.is_empty():
+		return false
+
 	var existing_slot: Slot = slots[slot]
 	if existing_slot.is_empty():
 		return set_item(slot, stack, remove_from_stack)
@@ -56,9 +59,4 @@ func swap_slots(slot_index: int, other_slot: Slot) -> bool:
 	if not is_slot_in_bounds(slot_index):
 		return false
 
-	var slot: Slot = slots[slot_index]
-	if slot.item_type != other_slot.item_type:
-		return false
-
-	slot.swap_slots(other_slot)
-	return true
+	return slots[slot_index].swap_slots(other_slot)

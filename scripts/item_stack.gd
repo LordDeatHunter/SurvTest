@@ -3,6 +3,8 @@ extends Object
 
 signal quantity_changed(amount: int)
 
+static var empty: ItemStack = ItemStack.new(null, 0)
+
 var quantity: int:
 	get:
 		return _quantity

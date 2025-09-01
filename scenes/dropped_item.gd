@@ -1,7 +1,7 @@
 class_name DroppedItem
 extends Node3D
 
-var stack: ItemStack = ItemStack.new(null, 0)
+var stack: ItemStack = ItemStack.empty
 
 
 func setup(item_stack: ItemStack, spawn_position: Vector3 = Vector3.ZERO) -> void:

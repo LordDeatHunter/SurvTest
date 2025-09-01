@@ -63,3 +63,7 @@ func add_item(stack: ItemStack) -> bool:
 
 func swap_slots(slot_index: int, slot: Slot) -> bool:
 	return inventory.swap_slots(slot_index, slot)
+
+
+func stack_slots(slot_index: int, stack: ItemStack) -> bool:
+	return inventory.stack_item(slot_index, stack)

@@ -11,28 +11,24 @@ var stack: ItemStack:
 		if _stack == value:
 			return
 
-		_stack = value if value and value.has_item else null
+		_stack = value.copy() if value and value.has_item() else ItemStack.empty
+
+		if _stack.is_empty() and stack.quantity_changed.is_connected(_update_stack_quantity):
+			stack.quantity_changed.disconnect(_update_stack_quantity)
+		else:
+			_stack.quantity_changed.connect(_update_stack_quantity)
 		item_changed.emit(_stack)
+		_update_stack_quantity(_stack.quantity)
+
 var item_type: Item.ItemType
-var _stack: ItemStack = ItemStack.new(null, 0)
+var _stack: ItemStack = ItemStack.empty
 
 
-func _ready() -> void:
-	stack.quantity_changed.connect(_validate_stack_quantity)
-	_validate_stack_quantity(stack.quantity)
-
-
-func _validate_stack_quantity(amount: int) -> void:
+func _update_stack_quantity(amount: int) -> void:
 	quantity_changed.emit(amount)
-	if amount > 0:
-		return
 
-	var had_item: bool = stack.has_item()
-	stack = null
-	if had_item:
-		item_changed.emit(stack)
-
-	return
+	if amount <= 0:
+		stack = ItemStack.empty
 
 
 func has_item() -> bool:
@@ -51,12 +47,11 @@ func set_stack(new_stack: ItemStack) -> bool:
 	return true
 
 
-func copy_from(other_slot: ItemStack) -> bool:
-	if item_type != other_slot.item_type:
+func copy_from(other_stack: ItemStack) -> bool:
+	if item_type != other_stack.item_type:
 		return false
 
-	stack = other_slot.copy()
-
+	stack = other_stack
 	return true
 
 

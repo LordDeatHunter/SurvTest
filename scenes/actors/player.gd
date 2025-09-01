@@ -311,7 +311,7 @@ func _handle_slot_lclicked(slot_index: int, slot: Slot, inventory_ui: InventoryU
 	if slot.is_empty() and held_slot.is_empty():
 		return
 
-	if inventory_ui.inventory.stack_item(slot_index, held_slot.stack):
+	if inventory_ui.stack_slots(slot_index, held_slot.stack):
 		return
 
 	inventory_ui.swap_slots(slot_index, held_slot)

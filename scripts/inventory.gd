@@ -32,7 +32,7 @@ func set_item(slot: int, stack: ItemStack, remove_from_stack: bool = true) -> bo
 	if not is_slot_in_bounds(slot):
 		return false
 
-	if slots[slot].copy_from(stack):
+	if not slots[slot].copy_from(stack):
 		return false
 
 	if remove_from_stack:
@@ -46,10 +46,10 @@ func stack_item(slot: int, stack: ItemStack, remove_from_stack: bool = true) -> 
 		return false
 
 	var existing_slot: Slot = slots[slot]
-	if existing_slot.stack.is_empty():
+	if existing_slot.is_empty():
 		return set_item(slot, stack, remove_from_stack)
 
-	return existing_slot.stack.stack_item(stack)
+	return existing_slot.stack.stack_item(stack, remove_from_stack)
 
 
 func swap_slots(slot_index: int, other_slot: Slot) -> bool:

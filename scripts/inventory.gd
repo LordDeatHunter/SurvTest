@@ -16,10 +16,17 @@ func add_item(new_stack: ItemStack) -> bool:
 	if new_stack.is_empty():
 		return true
 
-	var i: int = 0
-	while new_stack.has_item() and i < size:
-		stack_item(i, new_stack)
-		i += 1
+	for i in range(size):
+		if new_stack.is_empty():
+			break
+		if not slots[i].is_empty():
+			stack_item(i, new_stack)
+
+	for i in range(size):
+		if not new_stack.has_item():
+			break
+		if slots[i].is_empty():
+			set_item(i, new_stack)
 
 	return new_stack.is_empty()
 

@@ -13,22 +13,37 @@ func _init(init_size: int) -> void:
 
 
 func add_item(new_stack: ItemStack) -> bool:
-	if new_stack.is_empty():
-		return true
-
 	for i in range(size):
 		if new_stack.is_empty():
-			break
-		if not slots[i].is_empty():
-			stack_item(i, new_stack)
-
-	for i in range(size):
-		if not new_stack.has_item():
 			break
 		if slots[i].is_empty():
 			set_item(i, new_stack)
 
 	return new_stack.is_empty()
+
+
+func stack_item(stack: ItemStack) -> bool:
+	for i in range(size):
+		if stack.is_empty():
+			break
+		if slots[i].has_item():
+			stack_item_in_slot(i, stack)
+
+	return stack.is_empty()
+
+
+static func add_to_multiple_inventories(inventories: Array[Inventory], stack: ItemStack) -> bool:
+	for inventory in inventories:
+		if stack.is_empty():
+			break
+		inventory.stack_item(stack)
+
+	for inventory in inventories:
+		if stack.is_empty():
+			break
+		inventory.add_item(stack)
+
+	return stack.is_empty()
 
 
 func is_slot_in_bounds(slot: int) -> bool:
@@ -48,7 +63,7 @@ func set_item(slot: int, stack: ItemStack, remove_from_stack: bool = true) -> bo
 	return true
 
 
-func stack_item(slot: int, stack: ItemStack, remove_from_stack: bool = true) -> bool:
+func stack_item_in_slot(slot: int, stack: ItemStack, remove_from_stack: bool = true) -> bool:
 	if not is_slot_in_bounds(slot):
 		return false
 

@@ -51,29 +51,3 @@ func _on_item_slot_pressed(button_index: int, index: int) -> void:
 
 func increment_selected_slot(amount: int) -> void:
 	selected_slot = (selected_slot + amount + inventory_size) % inventory_size
-
-
-func set_item(slot_index: int, stack: ItemStack) -> bool:
-	return inventory.set_item(slot_index, stack)
-
-
-func add_item(stack: ItemStack) -> bool:
-	return inventory.add_item(stack)
-
-
-func swap_slots(slot_index: int, slot: Slot) -> bool:
-	return inventory.swap_slots(slot_index, slot)
-
-
-func stack_slots(slot_index: int, stack: ItemStack) -> bool:
-	return inventory.stack_item(slot_index, stack)
-
-
-func split_stack_half(slot_index: int, slot: Slot) -> bool:
-	return inventory.split_stack_half(slot_index, slot)
-
-
-func transfer_amount_between_slots(
-	slot_index: int, other_slot: Slot, amount: int, exact_amount: bool = true
-) -> bool:
-	return inventory.transfer_amount_between_slots(slot_index, other_slot, amount, exact_amount)

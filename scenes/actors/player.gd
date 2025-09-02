@@ -61,10 +61,10 @@ var current_dash_cooldown: float = 0.0
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	held_slot.item_changed.connect(_handle_held_item_changed)
-	hotbar.set_item(0, ItemStack.new(Items.example_item_1, 2))
-	hotbar.set_item(1, ItemStack.new(Items.example_item_1, 3))
-	hotbar.set_item(3, ItemStack.new(Items.example_item_2, 15))
-	accessories.set_item(1, ItemStack.new(Items.boots, 1))
+	hotbar.inventory.set_item(0, ItemStack.new(Items.example_item_1, 2))
+	hotbar.inventory.set_item(1, ItemStack.new(Items.example_item_1, 3))
+	hotbar.inventory.set_item(3, ItemStack.new(Items.example_item_2, 15))
+	accessories.inventory.set_item(1, ItemStack.new(Items.boots, 1))
 	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
 	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
 	inventory.hide()
@@ -311,10 +311,10 @@ func _handle_slot_lclicked(slot_index: int, slot: Slot, inventory_ui: InventoryU
 	if slot.is_empty() and held_slot.is_empty():
 		return
 
-	if inventory_ui.stack_slots(slot_index, held_slot.stack):
+	if inventory_ui.inventory.stack_item(slot_index, held_slot.stack):
 		return
 
-	inventory_ui.swap_slots(slot_index, held_slot)
+	inventory_ui.inventory.swap_slots(slot_index, held_slot)
 
 
 func _handle_slot_rclicked(slot_index: int, slot: Slot, inventory_ui: InventoryUi) -> void:
@@ -323,11 +323,11 @@ func _handle_slot_rclicked(slot_index: int, slot: Slot, inventory_ui: InventoryU
 
 	if (
 		slot.is_empty() != held_slot.is_empty()
-		and inventory_ui.split_stack_half(slot_index, held_slot)
+		and inventory_ui.inventory.split_stack_half(slot_index, held_slot)
 	):
 		return
 
-	inventory_ui.transfer_amount_between_slots(slot_index, held_slot, 1)
+	inventory_ui.inventory.transfer_amount_between_slots(slot_index, held_slot, 1)
 
 
 func _handle_dash(delta: float) -> void:

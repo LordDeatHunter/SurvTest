@@ -314,7 +314,7 @@ func _handle_slot_lclicked(slot_index: int, slot: Slot, inventory_ui: InventoryU
 	var shift_pressed: bool = Input.is_key_pressed(KEY_SHIFT)
 	if shift_pressed and slot.has_item():
 		var target_inventories: Array[Inventory] = [
-			hotbar.inventory, inventory.inventory, accessories.inventory
+			accessories.inventory, hotbar.inventory, inventory.inventory
 		]
 		target_inventories.erase(inventory_ui.inventory)
 

@@ -53,16 +53,8 @@ func is_empty() -> bool:
 	return not stack or stack.is_empty()
 
 
-func set_stack(new_stack: ItemStack) -> bool:
-	if item_type != new_stack.item_type:
-		return false
-
-	stack = new_stack
-	return true
-
-
 func copy_from(other_stack: ItemStack) -> bool:
-	if item_type != other_stack.item_type:
+	if item_type != Item.ItemType.GENERIC and item_type != other_stack.item_type:
 		return false
 
 	stack = other_stack

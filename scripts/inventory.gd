@@ -67,3 +67,22 @@ func swap_slots(slot_index: int, other_slot: Slot) -> bool:
 		return false
 
 	return slots[slot_index].swap_slots(other_slot)
+
+
+func split_stack_half(slot_index: int, other_slot: Slot) -> bool:
+	if not is_slot_in_bounds(slot_index):
+		return false
+
+	var current_slot: Slot = slots[slot_index]
+	var half_amount: int = ceil(current_slot.stack.quantity / 2.0)
+	return Slot.transfer_amount_between_slots(current_slot, other_slot, half_amount, false)
+
+
+func transfer_amount_between_slots(
+	slot_index: int, other_slot: Slot, amount: int, exact_amount: bool = true
+) -> bool:
+	if not is_slot_in_bounds(slot_index):
+		return false
+
+	var current_slot: Slot = slots[slot_index]
+	return Slot.transfer_amount_between_slots(other_slot, current_slot, amount, exact_amount)

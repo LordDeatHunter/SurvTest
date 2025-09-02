@@ -67,3 +67,13 @@ func swap_slots(slot_index: int, slot: Slot) -> bool:
 
 func stack_slots(slot_index: int, stack: ItemStack) -> bool:
 	return inventory.stack_item(slot_index, stack)
+
+
+func split_stack_half(slot_index: int, slot: Slot) -> bool:
+	return inventory.split_stack_half(slot_index, slot)
+
+
+func transfer_amount_between_slots(
+	slot_index: int, other_slot: Slot, amount: int, exact_amount: bool = true
+) -> bool:
+	return inventory.transfer_amount_between_slots(slot_index, other_slot, amount, exact_amount)

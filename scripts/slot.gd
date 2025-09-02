@@ -69,6 +69,13 @@ func copy_from(other_stack: ItemStack) -> bool:
 	return true
 
 
+func is_slot_compatible(check_stack: ItemStack) -> bool:
+	if has_item():
+		return stack.item == check_stack
+
+	return item_type == Item.ItemType.GENERIC or item_type == check_stack.item_type
+
+
 func swap_slots(other_slot: Slot) -> bool:
 	if is_empty() and other_slot.is_empty():
 		return true
@@ -76,14 +83,53 @@ func swap_slots(other_slot: Slot) -> bool:
 	if is_empty() and other_slot.has_item():
 		return other_slot.swap_slots(self)
 
-	if has_item() and other_slot.has_item() and item_type != other_slot.item_type:
+	if other_slot.has_item() and item_type != other_slot.item_type:
 		return false
 
-	if has_item() and other_slot.is_empty() and other_slot.item_type != Item.ItemType.GENERIC:
+	if other_slot.is_empty() and other_slot.item_type != Item.ItemType.GENERIC:
 		return false
 
 	var temp_stack: ItemStack = stack
 	stack = other_slot.stack
 	other_slot.stack = temp_stack
+
+	return true
+
+
+static func transfer_amount_between_slots(
+	from_slot: Slot, to_slot: Slot, amount, exact_amount: bool
+) -> bool:
+	if from_slot.is_empty() or amount <= 0:
+		return false
+	if exact_amount and from_slot.stack.quantity < amount:
+		return false
+
+	var available_amount_in_from_slot: int = from_slot.stack.quantity
+	var transfer_amount: int = min(amount, available_amount_in_from_slot)
+
+	if to_slot.is_empty():
+		var new_stack: ItemStack = ItemStack.new(from_slot.stack.item, transfer_amount)
+		if not to_slot.is_slot_compatible(new_stack):
+			return false
+
+		to_slot.stack = new_stack
+		from_slot.stack.remove_quantity(transfer_amount)
+		return true
+
+	if to_slot.stack.is_full():
+		return false
+	if from_slot.stack.item != to_slot.stack.item:
+		return false
+
+	var free_space_in_to_slot: int = to_slot.stack.item.max_quantity - to_slot.stack.quantity
+	transfer_amount = min(transfer_amount, free_space_in_to_slot)
+
+	if transfer_amount <= 0:
+		return false
+	if exact_amount and transfer_amount < amount:
+		return false
+
+	from_slot.stack.remove_quantity(transfer_amount)
+	to_slot.stack.add_quantity(transfer_amount)
 
 	return true

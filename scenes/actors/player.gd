@@ -318,22 +318,16 @@ func _handle_slot_lclicked(slot_index: int, slot: Slot, inventory_ui: InventoryU
 
 
 func _handle_slot_rclicked(slot_index: int, slot: Slot, inventory_ui: InventoryUi) -> void:
-	var stack: ItemStack = slot.stack
-	if stack.has_item() and held_slot.stack.is_empty():
-		var half_quantity: int = floor(stack.quantity / 2.0)
-		held_slot.copy_from(ItemStack.new(stack.item, half_quantity))
-		inventory_ui.set_item(slot_index, ItemStack.new(stack.item, stack.quantity - half_quantity))
+	if slot.is_empty() and held_slot.is_empty():
 		return
 
-	if stack.is_empty() and held_slot.stack.has_item():
-		inventory_ui.set_item(slot_index, ItemStack.new(held_slot.stack.item, 1))
-		held_slot.stack.remove_quantity(1)
+	if (
+		slot.is_empty() != held_slot.is_empty()
+		and inventory_ui.split_stack_half(slot_index, held_slot)
+	):
 		return
 
-	if stack.has_item() and not stack.is_full() and held_slot.stack.has_item():
-		inventory_ui.set_item(slot_index, ItemStack.new(held_slot.stack.item, stack.quantity + 1))
-		held_slot.stack.remove_quantity(1)
-		return
+	inventory_ui.transfer_amount_between_slots(slot_index, held_slot, 1)
 
 
 func _handle_dash(delta: float) -> void:

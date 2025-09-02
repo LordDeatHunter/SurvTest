@@ -311,6 +311,16 @@ func _handle_slot_lclicked(slot_index: int, slot: Slot, inventory_ui: InventoryU
 	if slot.is_empty() and held_slot.is_empty():
 		return
 
+	var shift_pressed: bool = Input.is_key_pressed(KEY_SHIFT)
+	if shift_pressed and slot.has_item():
+		var target_inventories: Array[Inventory] = [
+			hotbar.inventory, inventory.inventory, accessories.inventory
+		]
+		target_inventories.erase(inventory_ui.inventory)
+
+		Inventory.add_to_multiple_inventories(target_inventories, slot.stack)
+		return
+
 	if inventory_ui.inventory.stack_item_in_slot(slot_index, held_slot.stack):
 		return
 

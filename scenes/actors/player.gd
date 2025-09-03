@@ -308,6 +308,13 @@ func _handle_slot_clicked(
 
 
 func _handle_slot_lclicked(slot_index: int, slot: Slot, inventory_ui: InventoryUi) -> void:
+	var space_pressed: bool = Input.is_key_pressed(KEY_SPACE)
+	if space_pressed:
+		var target_inventories: Array[Inventory] = [hotbar.inventory, inventory.inventory]
+		target_inventories.erase(inventory_ui.inventory)
+		inventory_ui.inventory.transfer_inventory_to_multiple_inventories(target_inventories)
+		return
+
 	if slot.is_empty() and held_slot.is_empty():
 		return
 

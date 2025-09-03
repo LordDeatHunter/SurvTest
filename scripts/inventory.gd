@@ -46,6 +46,13 @@ static func add_to_multiple_inventories(inventories: Array[Inventory], stack: It
 	return stack.is_empty()
 
 
+func transfer_inventory_to_multiple_inventories(inventories: Array[Inventory]) -> void:
+	for slot in slots:
+		if slot.is_empty():
+			continue
+		add_to_multiple_inventories(inventories, slot.stack)
+
+
 func is_slot_in_bounds(slot: int) -> bool:
 	return slot >= 0 and slot < size
 

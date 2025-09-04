@@ -41,16 +41,17 @@ var capsule_mesh: CapsuleMesh:
 			return null
 		return mesh_instance_3d.mesh as CapsuleMesh
 var is_crouching: bool = false
-var held_stack: ItemStack = ItemStack.new(null, 0)
+var held_slot: Slot = Slot.new()
 var prev_collider: Object = null
 var current_dash_cooldown: float = 0.0
 
-@onready var head = $Head
-@onready var camera = $Head/Camera3D
+@onready var head: Node3D = $Head
+@onready var camera: Camera3D = $Head/Camera3D
 @onready var mesh_instance_3d: MeshInstance3D = $MeshInstance3D
 @onready var collision_shape_3d: CollisionShape3D = $CollisionShape3D
 @onready var hotbar: InventoryUi = %HotbarUi
 @onready var inventory: InventoryUi = %InventoryUi
+@onready var accessories: InventoryUi = %AccessoryUi
 @onready var held_item_node: Node2D = %HeldItem
 @onready var held_item_sprite: Sprite2D = %HeldItem/Sprite2D
 @onready var ray_cast: RayCast3D = %RayCast
@@ -59,17 +60,20 @@ var current_dash_cooldown: float = 0.0
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
-	held_stack.item_changed.connect(_handle_held_item_changed)
-	hotbar.inventory.set_item(3, ItemStack.new(Items.example_item_2, 15))
+	held_slot.item_changed.connect(_handle_held_item_changed)
 	hotbar.inventory.set_item(0, ItemStack.new(Items.example_item_1, 2))
 	hotbar.inventory.set_item(1, ItemStack.new(Items.example_item_1, 3))
+	hotbar.inventory.set_item(3, ItemStack.new(Items.example_item_2, 15))
+	accessories.inventory.set_item(1, ItemStack.new(Items.boots, 1))
 	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
 	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
 	inventory.hide()
+	accessories.slot_clicked.connect(_handle_slot_clicked.bind(accessories))
+	accessories.hide()
 
 
-func _handle_held_item_changed(item: Item) -> void:
-	held_item_sprite.texture = item.icon if not held_stack.is_empty() else null
+func _handle_held_item_changed(stack: ItemStack) -> void:
+	held_item_sprite.texture = stack.item.icon if held_slot.has_item() else null
 
 
 func _input(event):
@@ -79,10 +83,12 @@ func _input(event):
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
 			crosshair.hide()
 			inventory.show()
+			accessories.show()
 		else:
 			Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 			crosshair.show()
 			inventory.hide()
+			accessories.hide()
 
 	elif (
 		event is InputEventMouseButton
@@ -91,15 +97,18 @@ func _input(event):
 		and (event.button_index == MOUSE_BUTTON_LEFT or event.button_index == MOUSE_BUTTON_RIGHT)
 		and not hotbar.get_rect().has_point(event.position)
 		and not inventory.get_rect().has_point(event.position)
+		and not accessories.get_rect().has_point(event.position)
 	):
-		if not held_stack.is_empty():
-			var amount: int = held_stack.quantity if event.button_index == MOUSE_BUTTON_LEFT else 1
+		if held_slot.stack.has_item():
+			var amount: int = (
+				held_slot.stack.quantity if event.button_index == MOUSE_BUTTON_LEFT else 1
+			)
 			var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
 			var drop_position: Vector3 = (
 				head.global_transform.origin + -head.global_transform.basis.z * 0.5
 			)
-			dropped_item.setup(ItemStack.new(held_stack.item, amount), drop_position)
-			held_stack.remove_quantity(amount)
+			dropped_item.setup(ItemStack.new(held_slot.stack.item, amount), drop_position)
+			held_slot.stack.remove_quantity(amount)
 			get_parent().add_child.call_deferred(dropped_item)
 
 	if (
@@ -145,7 +154,9 @@ func _physics_process(delta):
 	var speed: float = SPRINT_SPEED if is_sprinting else WALK_SPEED
 
 	var input_dir: Vector2 = get_input_vector()
-	var direction = (head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	var direction: Vector3 = (
+		(head.transform.basis * Vector3(input_dir.x, 0, input_dir.y)).normalized()
+	)
 
 	var target_velocity: Vector3 = direction * speed if direction else Vector3.ZERO
 
@@ -288,48 +299,52 @@ func _handle_wall_sliding(delta: float) -> void:
 
 
 func _handle_slot_clicked(
-	button_index: int, slot_index: int, stack: ItemStack, inventory_ui: InventoryUi
+	button_index: int, slot_index: int, slot: Slot, inventory_ui: InventoryUi
 ) -> void:
 	if button_index == MOUSE_BUTTON_LEFT:
-		_handle_slot_lclicked(slot_index, stack, inventory_ui)
+		_handle_slot_lclicked(slot_index, slot, inventory_ui)
 	elif button_index == MOUSE_BUTTON_RIGHT:
-		_handle_slot_rclicked(slot_index, stack, inventory_ui)
+		_handle_slot_rclicked(slot_index, slot, inventory_ui)
 
 
-func _handle_slot_lclicked(slot_index: int, stack: ItemStack, inventory_ui: InventoryUi) -> void:
-	if not stack.is_empty() and held_stack.is_empty():
-		held_stack.copy_from(stack)
-		inventory_ui.inventory.set_item(slot_index, ItemStack.new(null, 0))
+func _handle_slot_lclicked(slot_index: int, slot: Slot, inventory_ui: InventoryUi) -> void:
+	var space_pressed: bool = Input.is_key_pressed(KEY_SPACE)
+	if space_pressed:
+		var target_inventories: Array[Inventory] = [hotbar.inventory, inventory.inventory]
+		target_inventories.erase(inventory_ui.inventory)
+		inventory_ui.inventory.transfer_inventory_to_multiple_inventories(target_inventories)
 		return
 
-	if stack.is_empty() and not held_stack.is_empty():
-		inventory_ui.inventory.set_item(slot_index, held_stack)
-		held_stack.item = null
+	if slot.is_empty() and held_slot.is_empty():
 		return
 
-	inventory_ui.inventory.stack_item(slot_index, held_stack)
+	var shift_pressed: bool = Input.is_key_pressed(KEY_SHIFT)
+	if shift_pressed and slot.has_item():
+		var target_inventories: Array[Inventory] = [
+			accessories.inventory, hotbar.inventory, inventory.inventory
+		]
+		target_inventories.erase(inventory_ui.inventory)
 
-
-func _handle_slot_rclicked(slot_index: int, stack: ItemStack, inventory_ui: InventoryUi) -> void:
-	if not stack.is_empty() and held_stack.is_empty():
-		var half_quantity: int = floor(stack.quantity / 2.0)
-		held_stack.copy_from(ItemStack.new(stack.item, half_quantity))
-		inventory_ui.inventory.set_item(
-			slot_index, ItemStack.new(stack.item, stack.quantity - half_quantity)
-		)
+		Inventory.add_to_multiple_inventories(target_inventories, slot.stack)
 		return
 
-	if stack.is_empty() and not held_stack.is_empty():
-		inventory_ui.inventory.set_item(slot_index, ItemStack.new(held_stack.item, 1))
-		held_stack.remove_quantity(1)
+	if inventory_ui.inventory.stack_item_in_slot(slot_index, held_slot.stack):
 		return
 
-	if not stack.is_empty() and not stack.is_full() and not held_stack.is_empty():
-		inventory_ui.inventory.set_item(
-			slot_index, ItemStack.new(held_stack.item, stack.quantity + 1)
-		)
-		held_stack.remove_quantity(1)
+	inventory_ui.inventory.swap_slots(slot_index, held_slot)
+
+
+func _handle_slot_rclicked(slot_index: int, slot: Slot, inventory_ui: InventoryUi) -> void:
+	if slot.is_empty() and held_slot.is_empty():
 		return
+
+	if (
+		slot.is_empty() != held_slot.is_empty()
+		and inventory_ui.inventory.split_stack_half(slot_index, held_slot)
+	):
+		return
+
+	inventory_ui.inventory.transfer_amount_between_slots(slot_index, held_slot, 1)
 
 
 func _handle_dash(delta: float) -> void:

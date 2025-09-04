@@ -8,7 +8,7 @@ const INVENTORY_SLOT_DOWN = preload("res://assets/textures/ui/inventory_slot_dow
 const INVENTORY_SLOT_NORMAL = preload("res://assets/textures/ui/inventory_slot_normal.png")
 const INVENTORY_SLOT_UP = preload("res://assets/textures/ui/inventory_slot_up.png")
 
-var stack: ItemStack
+var slot: Slot
 var selected: bool = false
 
 @onready var item_texture: TextureRect = %ItemTexture
@@ -18,22 +18,20 @@ var selected: bool = false
 func _ready() -> void:
 	mouse_entered.connect(select.bind(false))
 	mouse_exited.connect(deselect.bind(false))
-	stack.quantity_changed.connect(_update_quantity_label)
-	stack.item_changed.connect(_update_item)
-	_update_quantity_label(stack.quantity)
+	slot.quantity_changed.connect(_update_quantity_label)
+	slot.item_changed.connect(_update_item)
+	_update_item(slot.stack)
 
 
-func _update_item(item: Item) -> void:
-	item_texture.texture = item.icon if not stack.is_empty() else null
-
-
-func set_item(new_stack: ItemStack) -> void:
-	stack.copy_from(new_stack)
+func _update_item(stack: ItemStack) -> void:
+	item_texture.texture = stack.item.icon if slot.has_item() else null
+	_update_quantity_label(slot.stack.quantity)
 
 
 func deselect(set_value: bool = true) -> void:
 	if selected and not set_value:
 		return
+
 	texture = INVENTORY_SLOT_NORMAL
 	selected = false
 
@@ -53,7 +51,8 @@ func _gui_input(event: InputEvent) -> void:
 
 
 func _update_quantity_label(amount: int = 0) -> void:
-	if amount <= 0:
+	if amount <= 1:
 		quantity_label.text = ""
 		return
+
 	quantity_label.text = str(amount)

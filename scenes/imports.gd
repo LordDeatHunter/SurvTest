@@ -6,6 +6,8 @@ const SPREAD_CLOUD_PARTICLES: PackedScene = preload("res://scenes/SpreadCloudPar
 # SFX
 const SFX: Dictionary = {
 	"poof": preload("res://assets/sounds/poof.wav"),
+	"equip_accessory": preload("res://assets/sounds/equip_accessory.wav"),
+	"unequip_accessory": preload("res://assets/sounds/unequip_accessory.wav"),
 }
 
 const MUSIC: Dictionary = {

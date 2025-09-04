@@ -12,8 +12,8 @@ func _init(
 
 
 func on_equip(_player: Player) -> void:
-	pass
+	AudioHandlerSingleton.play_sound("equip_accessory")
 
 
 func on_unequip(_player: Player) -> void:
-	pass
+	AudioHandlerSingleton.play_sound("unequip_accessory")

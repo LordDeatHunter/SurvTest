@@ -11,8 +11,10 @@ func _init() -> void:
 
 
 func on_equip(player: Player) -> void:
+	super.on_equip(player)
 	player.max_multijumps += added_multijumps
 
 
 func on_unequip(player: Player) -> void:
+	super.on_unequip(player)
 	player.max_multijumps -= added_multijumps

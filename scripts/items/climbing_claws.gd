@@ -9,8 +9,10 @@ func _init() -> void:
 
 
 func on_equip(player: Player) -> void:
+	super.on_equip(player)
 	player.can_wallclimb = true
 
 
 func on_unequip(player: Player) -> void:
+	super.on_unequip(player)
 	player.can_wallclimb = false

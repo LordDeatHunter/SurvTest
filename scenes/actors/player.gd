@@ -67,13 +67,6 @@ func _ready():
 	accessories.slot_clicked.connect(_handle_slot_clicked.bind(accessories))
 	accessories.item_changed.connect(_on_accessory_equip)
 
-	hotbar.inventory.set_item(0, ItemStack.new(Items.example_item_1, 2))
-	hotbar.inventory.set_item(1, ItemStack.new(Items.example_item_1, 3))
-	hotbar.inventory.set_item(3, ItemStack.new(Items.example_item_2, 15))
-	hotbar.inventory.set_item(5, ItemStack.new(Items.boots, 1))
-	hotbar.inventory.set_item(6, ItemStack.new(Items.boots, 1))
-	hotbar.inventory.set_item(7, ItemStack.new(Items.boots, 1))
-
 	inventory.hide()
 	accessories.hide()
 

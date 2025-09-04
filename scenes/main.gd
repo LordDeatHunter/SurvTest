@@ -11,6 +11,7 @@ const GRASS_PATCH_SCENE: PackedScene = preload("res://scenes/grass_patch.tscn")
 
 
 func _ready():
+	AudioHandlerSingleton.play_music("pixel-quest")
 	for x in range(-ground_size.x / 2, ground_size.x / 2 + 1):
 		for z in range(-ground_size.y / 2, ground_size.y / 2 + 1):
 			var grass_patch: StaticBody3D = GRASS_PATCH_SCENE.instantiate()

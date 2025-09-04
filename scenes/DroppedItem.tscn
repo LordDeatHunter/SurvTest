@@ -6,9 +6,10 @@
 [ext_resource type="Script" uid="uid://bmcr7awumk7oi" path="res://scenes/dropped_item_visual_area.gd" id="4_hoqjr"]
 
 [sub_resource type="ShaderMaterial" id="ShaderMaterial_1jlw8"]
+resource_local_to_scene = true
 render_priority = 0
 shader = ExtResource("2_xr8br")
-shader_parameter/ColorParameter = Color(0.556086, 0.946122, 0.271396, 1)
+shader_parameter/glow_color = Color(1, 1, 1, 1)
 shader_parameter/Texture2DParameter = ExtResource("3_hoqjr")
 
 [sub_resource type="QuadMesh" id="QuadMesh_5hp2e"]
@@ -34,6 +35,7 @@ size = Vector3(0.4, 0.4, 0.4)
 script = ExtResource("1_ip0rf")
 
 [node name="LootMesh" type="MeshInstance3D" parent="."]
+unique_name_in_owner = true
 material_override = SubResource("ShaderMaterial_1jlw8")
 mesh = SubResource("QuadMesh_5hp2e")
 skeleton = NodePath("../RigidBody")

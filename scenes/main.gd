@@ -28,6 +28,11 @@ func _ready():
 		)
 		add_child(dropped_item)
 
+	for i in range(4):
+		var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
+		dropped_item.setup(ItemStack.new(Items.boots, 1), player.position + Vector3(0, 2, 0))
+		add_child(dropped_item)
+
 	_on_hide_patches_timeout()
 
 

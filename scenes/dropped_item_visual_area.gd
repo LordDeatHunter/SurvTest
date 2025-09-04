@@ -21,6 +21,6 @@ func _ready() -> void:
 
 func set_highlighted(is_highlighted: bool) -> void:
 	if is_highlighted:
-		material_overlay.albedo_color = Color(0, 1.0, 0.55, 0.5)
+		material_overlay.albedo_color = dropped_item.stack.item.color.lightened(0.5)
 	else:
-		material_overlay.albedo_color = Color(0, 0.8, 0.35)
+		material_overlay.albedo_color = dropped_item.stack.item.color

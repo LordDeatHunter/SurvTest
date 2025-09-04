@@ -15,7 +15,7 @@ source = 5
 texture_type = 1
 
 [sub_resource type="VisualShaderNodeColorParameter" id="VisualShaderNodeColorParameter_mqta3"]
-parameter_name = "ColorParameter"
+parameter_name = "glow_color"
 
 [sub_resource type="VisualShaderNodeInput" id="VisualShaderNodeInput_8jiwn"]
 input_name = "time"
@@ -41,7 +41,7 @@ keep_scale = true
 code = "shader_type spatial;
 render_mode blend_mix, depth_draw_opaque, cull_back, diffuse_lambert, specular_schlick_ggx, unshaded;
 
-uniform vec4 ColorParameter : source_color;
+uniform vec4 glow_color : source_color;
 uniform sampler2D Texture2DParameter : source_color;
 uniform sampler2D depth_tex_frg_10 : hint_depth_texture;
 
@@ -65,7 +65,7 @@ void vertex() {
 
 void fragment() {
 // ColorParameter:4
-	vec4 n_out4p0 = ColorParameter;
+	vec4 n_out4p0 = glow_color;
 
 
 	vec4 n_out3p0;
@@ -126,7 +126,7 @@ void fragment() {
 
 }
 "
-graph_offset = Vector2(-659.777, 26.1696)
+graph_offset = Vector2(-428.055, 65.5433)
 flags/unshaded = true
 nodes/vertex/2/node = SubResource("VisualShaderNodeBillboard_mmo8f")
 nodes/vertex/2/position = Vector2(80, 440)

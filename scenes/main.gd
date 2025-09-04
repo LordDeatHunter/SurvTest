@@ -10,6 +10,12 @@ const GRASS_PATCH_SCENE: PackedScene = preload("res://scenes/grass_patch.tscn")
 @onready var grass_patches: Node = $GrassPatches
 
 
+func _spawn_item_above_player(item_stack: ItemStack) -> void:
+	var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
+	dropped_item.setup(item_stack, player.position + Vector3(0, 2, 0))
+	add_child(dropped_item)
+
+
 func _ready():
 	AudioHandlerSingleton.play_music("pixel-quest")
 	for x in range(-ground_size.x / 2, ground_size.x / 2 + 1):
@@ -20,18 +26,16 @@ func _ready():
 
 	for i in range(32):
 		var amount: int = randi_range(1, 99)
-		var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
 		var rng: bool = randi() % 2 == 0
-		dropped_item.setup(
-			ItemStack.new(Items.example_item_1 if rng else Items.example_item_2, amount),
-			player.position + Vector3(0, 2, 0)
+		var stack: ItemStack = ItemStack.new(
+			Items.example_item_1 if rng else Items.example_item_2, amount
 		)
-		add_child(dropped_item)
+		_spawn_item_above_player(stack)
 
 	for i in range(4):
-		var dropped_item: DroppedItem = DROPPED_ITEM_SCENE.instantiate()
-		dropped_item.setup(ItemStack.new(Items.boots, 1), player.position + Vector3(0, 2, 0))
-		add_child(dropped_item)
+		_spawn_item_above_player(ItemStack.new(Items.boots, 1))
+
+	_spawn_item_above_player(ItemStack.new(Items.claws, 1))
 
 	_on_hide_patches_timeout()
 

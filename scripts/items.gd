@@ -10,3 +10,4 @@ static var example_item_2: Item = Item.new(
 	"Example Item 2", "This is an example item 2.", EXAMPLE_ITEM_2_TEXTURE, 99
 )
 static var boots: JumpBoots = JumpBoots.new()
+static var claws: ClimbingClaws = ClimbingClaws.new()

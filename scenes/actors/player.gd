@@ -21,6 +21,7 @@ const MAX_DASH_COOLDOWN: float = 1.0
 const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/DroppedItem.tscn")
 
 var max_multijumps: int = 0
+var can_wallclimb: bool = false
 
 var t_bob: int = 0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -233,19 +234,21 @@ func _handle_sprinting():
 
 
 func _handle_jumping():
-	if is_on_floor() or is_on_wall():
+	var is_climbing_wall: bool = can_wallclimb and is_on_wall()
+
+	if is_on_floor() or is_climbing_wall:
 		current_multijumps = 0
 
-	var can_jump: bool = is_on_floor() or is_on_wall() or (current_multijumps < max_multijumps)
+	var can_jump: bool = is_on_floor() or is_climbing_wall or (current_multijumps < max_multijumps)
 
 	if Input.is_action_just_pressed("jump") and can_jump:
-		if is_on_wall():
+		if is_climbing_wall:
 			var push_velocity: Vector3 = get_wall_normal() * WALL_JUMP_VELOCITY
 			velocity = Vector3(push_velocity.x, JUMP_VELOCITY, push_velocity.z)
 		else:
 			velocity.y = JUMP_VELOCITY
 
-		if not is_on_floor() and not is_on_wall():
+		if not is_on_floor() and not is_climbing_wall:
 			current_multijumps += 1
 			AudioHandlerSingleton.play_sound("poof")
 			var cloud_particles: Node = Imports.SPREAD_CLOUD_PARTICLES.instantiate()
@@ -294,6 +297,9 @@ func _handle_crouching(delta: float):
 
 
 func _handle_wall_sliding(delta: float) -> void:
+	if not can_wallclimb:
+		return
+
 	if not is_on_wall_only() or velocity.y > 0:
 		return
 

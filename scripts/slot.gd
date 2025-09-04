@@ -1,7 +1,7 @@
 class_name Slot
 extends TextureRect
 
-signal item_changed(stack: ItemStack)
+signal item_changed(old_stack: ItemStack, new_stack: ItemStack)
 signal quantity_changed(amount: int)
 
 var stack: ItemStack:
@@ -10,6 +10,7 @@ var stack: ItemStack:
 	set(value):
 		if _stack == value:
 			return
+		var old_stack: ItemStack = _stack
 
 		_disconnect_stack_signals()
 
@@ -17,7 +18,7 @@ var stack: ItemStack:
 
 		_connect_stack_signals()
 
-		item_changed.emit(_stack)
+		item_changed.emit(old_stack, _stack)
 		quantity_changed.emit(_stack.quantity)
 
 var item_type: Item.ItemType
@@ -63,7 +64,7 @@ func copy_from(other_stack: ItemStack) -> bool:
 
 func is_slot_compatible(check_stack: ItemStack) -> bool:
 	if has_item():
-		return stack.item == check_stack
+		return stack.item == check_stack.item
 
 	return item_type == Item.ItemType.GENERIC or item_type == check_stack.item_type
 
@@ -78,7 +79,11 @@ func swap_slots(other_slot: Slot) -> bool:
 	if other_slot.has_item() and item_type != other_slot.item_type:
 		return false
 
-	if other_slot.is_empty() and other_slot.item_type != Item.ItemType.GENERIC:
+	if (
+		other_slot.is_empty()
+		and other_slot.item_type != Item.ItemType.GENERIC
+		and stack.item_type != other_slot.item_type
+	):
 		return false
 
 	var temp_stack: ItemStack = stack

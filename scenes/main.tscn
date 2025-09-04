@@ -40,7 +40,6 @@ environment = SubResource("Environment_ofmmo")
 
 [node name="Player" parent="." instance=ExtResource("1_heqpp")]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 18.8735, 0)
-max_multijumps = 1
 
 [node name="CSGBox3D3" type="CSGBox3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -22.288, 5.5, 0)

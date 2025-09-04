@@ -20,11 +20,10 @@ func _ready() -> void:
 	mouse_exited.connect(deselect.bind(false))
 	slot.quantity_changed.connect(_update_quantity_label)
 	slot.item_changed.connect(_update_item)
-	_update_item(slot.stack)
 
 
-func _update_item(stack: ItemStack) -> void:
-	item_texture.texture = stack.item.icon if slot.has_item() else null
+func _update_item(_old_stack: ItemStack, new_stack: ItemStack) -> void:
+	item_texture.texture = new_stack.item.icon if slot.has_item() else null
 	_update_quantity_label(slot.stack.quantity)
 
 

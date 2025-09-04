@@ -20,7 +20,7 @@ const MAX_DASH_COOLDOWN: float = 1.0
 
 const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/DroppedItem.tscn")
 
-@export var max_multijumps: int = 0
+var max_multijumps: int = 0
 
 var t_bob: int = 0
 var gravity = ProjectSettings.get_setting("physics/3d/default_gravity")
@@ -60,20 +60,35 @@ var current_dash_cooldown: float = 0.0
 
 func _ready():
 	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+
 	held_slot.item_changed.connect(_handle_held_item_changed)
+	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
+	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
+	accessories.slot_clicked.connect(_handle_slot_clicked.bind(accessories))
+	accessories.item_changed.connect(_on_accessory_equip)
+
 	hotbar.inventory.set_item(0, ItemStack.new(Items.example_item_1, 2))
 	hotbar.inventory.set_item(1, ItemStack.new(Items.example_item_1, 3))
 	hotbar.inventory.set_item(3, ItemStack.new(Items.example_item_2, 15))
-	accessories.inventory.set_item(1, ItemStack.new(Items.boots, 1))
-	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
-	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
+	hotbar.inventory.set_item(5, ItemStack.new(Items.boots, 1))
+	hotbar.inventory.set_item(6, ItemStack.new(Items.boots, 1))
+	hotbar.inventory.set_item(7, ItemStack.new(Items.boots, 1))
+
 	inventory.hide()
-	accessories.slot_clicked.connect(_handle_slot_clicked.bind(accessories))
 	accessories.hide()
 
 
-func _handle_held_item_changed(stack: ItemStack) -> void:
-	held_item_sprite.texture = stack.item.icon if held_slot.has_item() else null
+func _on_accessory_equip(
+	old_stack: ItemStack, new_stack: ItemStack, _slot_index: int, _slot: Slot
+) -> void:
+	if old_stack.item:
+		(old_stack.item as Accessory).on_unequip(self)
+	if new_stack.item:
+		(new_stack.item as Accessory).on_equip(self)
+
+
+func _handle_held_item_changed(_old_stack: ItemStack, new_stack: ItemStack) -> void:
+	held_item_sprite.texture = new_stack.item.icon if held_slot.has_item() else null
 
 
 func _input(event):

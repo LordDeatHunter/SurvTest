@@ -25,10 +25,3 @@ func _init(
 	self.icon = icon
 	self.max_quantity = max_quantity
 	self.item_type = item_type
-
-
-static func create_accessory_item(
-	name: String, description: String, icon: Texture2D, max_quantity: int = 1
-) -> Item:
-	var item: Item = Item.new(name, description, icon, max_quantity, ItemType.ACCESSORY)
-	return item

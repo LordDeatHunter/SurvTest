@@ -2,14 +2,15 @@ class_name InventoryUi
 extends GridContainer
 
 signal slot_clicked(slot_index: int, stack: Slot)
+signal item_changed(slot_index: int, slot: Slot, previous_stack: ItemStack, new_stack: ItemStack)
 
 const ITEM_SLOT: PackedScene = preload("res://scenes/ui/inventory_slot.tscn")
-
 @export var inventory_size: int = 9
 @export var item_type: Item.ItemType
 
 var slots: Array[InventorySlot]
 var inventory: Inventory
+
 var selected_slot: int:
 	get:
 		return selected_slot
@@ -38,9 +39,16 @@ func _init_inventory():
 		ui_slot.slot = inventory.slots[i]
 		ui_slot.slot.item_type = item_type
 		ui_slot.item_click_pressed.connect(_on_item_slot_pressed.bind(i))
+		ui_slot.slot.item_changed.connect(_handle_item_changed.bind(i, ui_slot))
 
 		slots.append(ui_slot)
 		add_child(ui_slot)
+
+
+func _handle_item_changed(
+	old_stack: ItemStack, new_stack: ItemStack, index: int, ui_slot: InventorySlot
+) -> void:
+	item_changed.emit(old_stack, new_stack, index, ui_slot.slot)
 
 
 func _on_item_slot_pressed(button_index: int, index: int) -> void:

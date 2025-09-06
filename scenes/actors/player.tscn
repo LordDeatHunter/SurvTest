@@ -1,9 +1,9 @@
 [gd_scene load_steps=7 format=3 uid="uid://b5rkalf5fpin6"]
 
 [ext_resource type="Script" uid="uid://d0r4i8b8pntni" path="res://scenes/actors/player.gd" id="1_utxda"]
+[ext_resource type="PackedScene" uid="uid://bnyx3p30yajoq" path="res://scenes/items/sword.tscn" id="2_7wueq"]
 [ext_resource type="PackedScene" uid="uid://se60aaxu64dc" path="res://scenes/ui/inventory_ui.tscn" id="2_ru62r"]
 [ext_resource type="Texture2D" uid="uid://fgotj5h2p4fd" path="res://assets/textures/crosshair.png" id="3_ktjr4"]
-[ext_resource type="PackedScene" uid="uid://b0ua46hom5b8e" path="res://assets/models/sword.gltf" id="4_7wueq"]
 
 [sub_resource type="CapsuleMesh" id="CapsuleMesh_p2cts"]
 
@@ -22,7 +22,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
 shape = SubResource("CapsuleShape3D_ljp7c")
 
 [node name="Head" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19209e-07, 0, 1.19209e-07)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.7, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Head"]
 current = true
@@ -35,8 +35,9 @@ collision_mask = 2
 collide_with_areas = true
 collide_with_bodies = false
 
-[node name="RemoteTransform3D" type="RemoteTransform3D" parent="Head"]
-remote_path = NodePath("../../Node3D")
+[node name="Sword" parent="Head/Camera3D" instance=ExtResource("2_7wueq")]
+unique_name_in_owner = true
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.96, -1.385, -0.76)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15
@@ -84,9 +85,3 @@ columns = 9
 unique_name_in_owner = true
 
 [node name="Sprite2D" type="Sprite2D" parent="HeldItem"]
-
-[node name="Node3D" type="Node3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.19209e-07, 0, 1.19209e-07)
-
-[node name="SwordModel" parent="Node3D" instance=ExtResource("4_7wueq")]
-transform = Transform3D(-0.121869, 0, -0.992546, 0, 1, 0, 0.992546, 0, -0.121869, 0.959, -1.445, -0.964)

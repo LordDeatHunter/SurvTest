@@ -119,6 +119,13 @@ func _input(event):
 			dropped_item.setup(ItemStack.new(held_slot.stack.item, amount), drop_position)
 			held_slot.stack.remove_quantity(amount)
 			get_parent().add_child.call_deferred(dropped_item)
+	elif (
+		event is InputEventMouseButton
+		and mouse_mode != Input.MOUSE_MODE_VISIBLE
+		and event.is_pressed()
+		and event.button_index == MOUSE_BUTTON_LEFT
+	):
+		%Sword.swing()
 
 	if (
 		prev_collider

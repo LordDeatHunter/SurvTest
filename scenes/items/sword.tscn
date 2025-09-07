@@ -5,58 +5,7 @@
 
 [sub_resource type="CapsuleShape3D" id="CapsuleShape3D_7wueq"]
 radius = 0.2
-height = 1.7
-
-[sub_resource type="Animation" id="Animation_i5ed0"]
-resource_name = "attack"
-tracks/0/type = "value"
-tracks/0/imported = false
-tracks/0/enabled = true
-tracks/0/path = NodePath(".:rotation")
-tracks/0/interp = 1
-tracks/0/loop_wrap = true
-tracks/0/keys = {
-"times": PackedFloat32Array(0, 0.133333, 0.3, 1),
-"transitions": PackedFloat32Array(-0.5, -2, 0.5, 2),
-"update": 0,
-"values": [Vector3(3.93801e-08, -1.39626, 0.165806), Vector3(-0.226893, -2.44346, -0.174533), Vector3(-0.785398, -1.5708, 1.75406), Vector3(0, -1.39626, 0.165806)]
-}
-tracks/1/type = "value"
-tracks/1/imported = false
-tracks/1/enabled = true
-tracks/1/path = NodePath("Area3D:monitoring")
-tracks/1/interp = 1
-tracks/1/loop_wrap = true
-tracks/1/keys = {
-"times": PackedFloat32Array(0.1, 0.4),
-"transitions": PackedFloat32Array(1, 1),
-"update": 1,
-"values": [true, false]
-}
-tracks/2/type = "value"
-tracks/2/imported = false
-tracks/2/enabled = true
-tracks/2/path = NodePath(".:position")
-tracks/2/interp = 1
-tracks/2/loop_wrap = true
-tracks/2/keys = {
-"times": PackedFloat32Array(0, 0.133333, 0.3, 1),
-"transitions": PackedFloat32Array(-0.5, -2, 0.5, -2),
-"update": 0,
-"values": [Vector3(0, 0, 0), Vector3(-0.05, 0.5, 0.075), Vector3(-1.5, 0.1, -1), Vector3(0, 0, 0)]
-}
-tracks/3/type = "value"
-tracks/3/imported = false
-tracks/3/enabled = true
-tracks/3/path = NodePath("Area3D/CollisionShape3D:shape:radius")
-tracks/3/interp = 1
-tracks/3/loop_wrap = true
-tracks/3/keys = {
-"times": PackedFloat32Array(0, 0.3, 1),
-"transitions": PackedFloat32Array(-0.5, -0.5, -0.5),
-"update": 0,
-"values": [0.2, 0.5, 0.2]
-}
+height = 1.95598
 
 [sub_resource type="Animation" id="Animation_l3uod"]
 length = 0.001
@@ -109,6 +58,57 @@ tracks/3/keys = {
 "values": [0.2]
 }
 
+[sub_resource type="Animation" id="Animation_i5ed0"]
+resource_name = "attack"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.133333, 0.3, 1),
+"transitions": PackedFloat32Array(-0.5, -2, 0.5, 2),
+"update": 0,
+"values": [Vector3(3.93801e-08, -1.39626, 0.165806), Vector3(-0.226893, -2.44346, -0.174533), Vector3(-0.785398, -1.5708, 1.75406), Vector3(0, -1.39626, 0.165806)]
+}
+tracks/1/type = "value"
+tracks/1/imported = false
+tracks/1/enabled = true
+tracks/1/path = NodePath("Area3D:monitoring")
+tracks/1/interp = 1
+tracks/1/loop_wrap = true
+tracks/1/keys = {
+"times": PackedFloat32Array(0.1, 0.4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 1,
+"values": [true, false]
+}
+tracks/2/type = "value"
+tracks/2/imported = false
+tracks/2/enabled = true
+tracks/2/path = NodePath(".:position")
+tracks/2/interp = 1
+tracks/2/loop_wrap = true
+tracks/2/keys = {
+"times": PackedFloat32Array(0, 0.133333, 0.3, 1),
+"transitions": PackedFloat32Array(-0.5, -2, 0.5, -2),
+"update": 0,
+"values": [Vector3(0, 0, 0), Vector3(-0.05, 0.5, 0.075), Vector3(-1.5, 0.1, -1), Vector3(0, 0, 0)]
+}
+tracks/3/type = "value"
+tracks/3/imported = false
+tracks/3/enabled = true
+tracks/3/path = NodePath("Area3D/CollisionShape3D:shape:radius")
+tracks/3/interp = 1
+tracks/3/loop_wrap = true
+tracks/3/keys = {
+"times": PackedFloat32Array(0, 0.3, 1),
+"transitions": PackedFloat32Array(-0.5, -0.5, -0.5),
+"update": 0,
+"values": [0.2, 0.5, 0.2]
+}
+
 [sub_resource type="AnimationLibrary" id="AnimationLibrary_gj357"]
 _data = {
 &"RESET": SubResource("Animation_l3uod"),
@@ -119,7 +119,7 @@ _data = {
 script = ExtResource("1_i5ed0")
 
 [node name="Sword" type="Node3D" parent="."]
-transform = Transform3D(0.17127, -0.0286607, -0.984807, 0.165047, 0.986286, -3.93801e-08, 0.971302, -0.162539, 0.173651, 0, 0, 0)
+transform = Transform3D(0.17127, -0.0286608, -0.984807, 0.165047, 0.986286, -3.93801e-08, 0.971302, -0.16254, 0.173651, 0, 0, 0)
 
 [node name="SwordModel" parent="Sword" instance=ExtResource("1_76q7b")]
 
@@ -129,7 +129,7 @@ collision_mask = 7
 monitoring = false
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Sword/Area3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.30411, 0)
 shape = SubResource("CapsuleShape3D_7wueq")
 
 [node name="Camera3D" type="Camera3D" parent="Sword"]

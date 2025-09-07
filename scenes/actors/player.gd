@@ -45,6 +45,7 @@ var is_crouching: bool = false
 var held_slot: Slot = Slot.new()
 var prev_collider: Object = null
 var current_dash_cooldown: float = 0.0
+var selected_item: Node
 
 @onready var head: Node3D = $Head
 @onready var camera: Camera3D = $Head/Camera3D
@@ -68,8 +69,22 @@ func _ready():
 	accessories.slot_clicked.connect(_handle_slot_clicked.bind(accessories))
 	accessories.item_changed.connect(_on_accessory_equip)
 
+	hotbar.slot_selected.connect(_on_hotbar_slot_selected)
+
 	inventory.hide()
 	accessories.hide()
+
+
+func _on_hotbar_slot_selected(_slot_index: int, slot: Slot) -> void:
+	if selected_item:
+		camera.remove_child(selected_item)
+		selected_item.queue_free()
+		selected_item = null
+
+	if slot.has_item() and slot.stack.item.name == "Sword":
+		selected_item = Imports.HELD_SWORD_SCENE.instantiate()
+		selected_item.position = Vector3(0.96, -1.385, -0.76)
+		camera.add_child(selected_item)
 
 
 func _on_accessory_equip(
@@ -119,6 +134,14 @@ func _input(event):
 			dropped_item.setup(ItemStack.new(held_slot.stack.item, amount), drop_position)
 			held_slot.stack.remove_quantity(amount)
 			get_parent().add_child.call_deferred(dropped_item)
+	elif (
+		selected_item
+		and event is InputEventMouseButton
+		and mouse_mode != Input.MOUSE_MODE_VISIBLE
+		and event.is_pressed()
+		and event.button_index == MOUSE_BUTTON_LEFT
+	):
+		selected_item.swing()
 
 	if (
 		prev_collider

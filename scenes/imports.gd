@@ -2,6 +2,7 @@ class_name Imports
 extends Object
 
 const SPREAD_CLOUD_PARTICLES: PackedScene = preload("res://scenes/SpreadCloudParticles.tscn")
+const HELD_SWORD_SCENE: PackedScene = preload("res://scenes/items/sword.tscn")
 
 # SFX
 const SFX: Dictionary = {

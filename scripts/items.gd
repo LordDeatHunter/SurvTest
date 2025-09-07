@@ -11,3 +11,4 @@ static var example_item_2: Item = Item.new(
 )
 static var boots: JumpBoots = JumpBoots.new()
 static var claws: ClimbingClaws = ClimbingClaws.new()
+static var sword: SwordItem = SwordItem.new()

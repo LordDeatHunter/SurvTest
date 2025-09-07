@@ -1,7 +1,6 @@
-[gd_scene load_steps=7 format=3 uid="uid://b5rkalf5fpin6"]
+[gd_scene load_steps=6 format=3 uid="uid://b5rkalf5fpin6"]
 
 [ext_resource type="Script" uid="uid://d0r4i8b8pntni" path="res://scenes/actors/player.gd" id="1_utxda"]
-[ext_resource type="PackedScene" uid="uid://bnyx3p30yajoq" path="res://scenes/items/sword.tscn" id="2_7wueq"]
 [ext_resource type="PackedScene" uid="uid://se60aaxu64dc" path="res://scenes/ui/inventory_ui.tscn" id="2_ru62r"]
 [ext_resource type="Texture2D" uid="uid://fgotj5h2p4fd" path="res://assets/textures/crosshair.png" id="3_ktjr4"]
 
@@ -34,10 +33,6 @@ target_position = Vector3(0, -5, 0)
 collision_mask = 2
 collide_with_areas = true
 collide_with_bodies = false
-
-[node name="Sword" parent="Head/Camera3D" instance=ExtResource("2_7wueq")]
-unique_name_in_owner = true
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.96, -1.385, -0.76)
 
 [node name="MarginContainer" type="MarginContainer" parent="."]
 anchors_preset = 15

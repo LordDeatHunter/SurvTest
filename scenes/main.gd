@@ -36,6 +36,7 @@ func _ready():
 		_spawn_item_above_player(ItemStack.new(Items.boots, 1))
 
 	_spawn_item_above_player(ItemStack.new(Items.claws, 1))
+	_spawn_item_above_player(ItemStack.new(Items.sword, 1))
 
 	_on_hide_patches_timeout()
 

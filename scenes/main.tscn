@@ -1,4 +1,4 @@
-[gd_scene load_steps=8 format=3 uid="uid://de8nidaic0qgr"]
+[gd_scene load_steps=7 format=3 uid="uid://de8nidaic0qgr"]
 
 [ext_resource type="Script" uid="uid://b1vmho84ydpbf" path="res://scenes/main.gd" id="1_7561c"]
 [ext_resource type="PackedScene" uid="uid://b5rkalf5fpin6" path="res://scenes/actors/player.tscn" id="1_heqpp"]
@@ -28,11 +28,10 @@ volumetric_fog_density = 0.01
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_yfgiq"]
 
-[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_0wfyh"]
-albedo_color = Color(0.218229, 0.567966, 0.310512, 1)
-
 [node name="World" type="Node3D"]
 script = ExtResource("1_7561c")
+ground_size = null
+grass_cull_distance = null
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.384295, -0.338358, 0.858971, 0, 0.930418, 0.366501, -0.92321, -0.140845, 0.357555, 0, 0, 0)
@@ -72,10 +71,5 @@ material = SubResource("StandardMaterial3D_yfgiq")
 
 [node name="HidePatches" type="Timer" parent="."]
 autostart = true
-
-[node name="CSGSphere3D" type="CSGSphere3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -10.2983, 2.82219, 7.28769)
-use_collision = true
-material = SubResource("StandardMaterial3D_0wfyh")
 
 [connection signal="timeout" from="HidePatches" to="." method="_on_hide_patches_timeout"]

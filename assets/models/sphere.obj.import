@@ -1,0 +1,25 @@
+[remap]
+
+importer="wavefront_obj"
+importer_version=1
+type="Mesh"
+uid="uid://cqxmbno60qg62"
+path="res://.godot/imported/sphere.obj-9f1e5a5604cc4d58a37eb52ae0c870b8.mesh"
+
+[deps]
+
+files=["res://.godot/imported/sphere.obj-9f1e5a5604cc4d58a37eb52ae0c870b8.mesh"]
+
+source_file="res://assets/models/sphere.obj"
+dest_files=["res://.godot/imported/sphere.obj-9f1e5a5604cc4d58a37eb52ae0c870b8.mesh", "res://.godot/imported/sphere.obj-9f1e5a5604cc4d58a37eb52ae0c870b8.mesh"]
+
+[params]
+
+generate_tangents=true
+generate_lods=true
+generate_shadow_mesh=true
+generate_lightmap_uv2=false
+generate_lightmap_uv2_texel_size=0.2
+scale_mesh=Vector3(1.5, 1.5, 1.5)
+offset_mesh=Vector3(0, 0, 0)
+force_disable_mesh_compression=false

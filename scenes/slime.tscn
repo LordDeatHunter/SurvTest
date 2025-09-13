@@ -1,0 +1,50 @@
+[gd_scene load_steps=7 format=3 uid="uid://c3dn67hjj0f5"]
+
+[ext_resource type="ArrayMesh" uid="uid://cqxmbno60qg62" path="res://assets/models/sphere.obj" id="1_371uh"]
+[ext_resource type="Script" uid="uid://ddsh5u7xdnggv" path="res://scenes/slime.gd" id="2_p2gj0"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_p2gj0"]
+load_path = "res://.godot/imported/tmp.png-fac24a0a76de595dde809c5f361ebf93.s3tc.ctex"
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_n6pvg"]
+resource_local_to_scene = true
+transparency = 4
+albedo_color = Color(0.18039216, 0.6666667, 0.6784314, 0.63529414)
+albedo_texture = SubResource("CompressedTexture2D_p2gj0")
+refraction_texture_channel = 2
+uv1_scale = Vector3(4, 4, 4)
+texture_filter = 0
+stencil_flags = 2
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_p2gj0"]
+radius = 16.0
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_n6pvg"]
+radius = 0.8
+
+[node name="SoftBody3D" type="SoftBody3D"]
+mesh = ExtResource("1_371uh")
+surface_material_override/0 = SubResource("StandardMaterial3D_n6pvg")
+collision_layer = 0
+simulation_precision = 10
+total_mass = 2.01
+linear_stiffness = 0.1
+pressure_coefficient = 55.0
+script = ExtResource("2_p2gj0")
+
+[node name="InnerNodes" type="Node3D" parent="."]
+
+[node name="DetectionArea" type="Area3D" parent="InnerNodes"]
+unique_name_in_owner = true
+monitorable = false
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InnerNodes/DetectionArea"]
+unique_name_in_owner = true
+shape = SubResource("SphereShape3D_p2gj0")
+
+[node name="HitArea" type="Area3D" parent="InnerNodes"]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="InnerNodes/HitArea"]
+shape = SubResource("SphereShape3D_n6pvg")
+
+[connection signal="body_entered" from="InnerNodes/DetectionArea" to="." method="_on_detection_area_body_entered"]

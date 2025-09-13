@@ -9,6 +9,7 @@ const SFX: Dictionary = {
 	"poof": preload("res://assets/sounds/poof.wav"),
 	"equip_accessory": preload("res://assets/sounds/equip_accessory.wav"),
 	"unequip_accessory": preload("res://assets/sounds/unequip_accessory.wav"),
+	"slime_hit_1": preload("res://assets/sounds/slime_hit_1.wav"),
 }
 
 const MUSIC: Dictionary = {

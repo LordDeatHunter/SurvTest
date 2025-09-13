@@ -141,7 +141,7 @@ func _input(event):
 		and event.is_pressed()
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
-		selected_item.swing()
+		selected_item.swing(self)
 
 	if (
 		prev_collider

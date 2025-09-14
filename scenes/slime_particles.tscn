@@ -39,7 +39,6 @@ radius = 0.1
 height = 0.1
 
 [node name="SlimeParticles" type="GPUParticles3D"]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43021536, -1.1917081, 2.0360494)
 emitting = false
 amount = 400
 lifetime = 6.0

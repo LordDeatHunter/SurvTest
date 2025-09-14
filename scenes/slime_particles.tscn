@@ -1,0 +1,51 @@
+[gd_scene load_steps=8 format=3 uid="uid://c4kledpgt6frp"]
+
+[sub_resource type="Curve" id="Curve_5vh5f"]
+_data = [Vector2(0, 1), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_aldo3"]
+curve = SubResource("Curve_5vh5f")
+
+[sub_resource type="Curve" id="Curve_aldo3"]
+_data = [Vector2(0.75, 0.7), 0.0, 0.0, 0, 0, Vector2(1, 0), 0.0, 0.0, 0, 0]
+point_count = 2
+
+[sub_resource type="CurveTexture" id="CurveTexture_81uyt"]
+curve = SubResource("Curve_aldo3")
+
+[sub_resource type="ParticleProcessMaterial" id="ParticleProcessMaterial_xnpr3"]
+emission_shape = 1
+emission_sphere_radius = 0.8
+spread = 180.0
+flatness = 0.5
+initial_velocity_max = 4.0
+scale_min = 0.5
+scale_max = 3.0
+scale_curve = SubResource("CurveTexture_81uyt")
+alpha_curve = SubResource("CurveTexture_aldo3")
+collision_mode = 1
+collision_friction = 0.18
+collision_bounce = 0.0
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_3jah0"]
+transparency = 4
+vertex_color_use_as_albedo = true
+albedo_color = Color(0.8810569, 0.346629, 0.7652641, 0.6666667)
+
+[sub_resource type="SphereMesh" id="SphereMesh_5vh5f"]
+material = SubResource("StandardMaterial3D_3jah0")
+radius = 0.1
+height = 0.1
+
+[node name="SlimeParticles" type="GPUParticles3D"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.43021536, -1.1917081, 2.0360494)
+emitting = false
+amount = 400
+lifetime = 6.0
+one_shot = true
+explosiveness = 1.0
+process_material = SubResource("ParticleProcessMaterial_xnpr3")
+draw_pass_1 = SubResource("SphereMesh_5vh5f")
+
+[connection signal="finished" from="." to="." method="_on_finished"]

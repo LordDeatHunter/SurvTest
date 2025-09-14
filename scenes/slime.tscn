@@ -47,4 +47,9 @@ shape = SubResource("SphereShape3D_p2gj0")
 [node name="CollisionShape3D" type="CollisionShape3D" parent="InnerNodes/HitArea"]
 shape = SubResource("SphereShape3D_n6pvg")
 
+[node name="Timer" type="Timer" parent="."]
+wait_time = 6.0
+one_shot = true
+
 [connection signal="body_entered" from="InnerNodes/DetectionArea" to="." method="_on_detection_area_body_entered"]
+[connection signal="timeout" from="Timer" to="." method="_on_timer_timeout"]

@@ -1,7 +1,7 @@
 class_name Slime
 extends SoftBody3D
 
-enum SlimeState { ROAMING, ATTACKING }
+enum SlimeState { ROAMING, ATTACKING, DEAD }
 
 const IDLE_COLOR: Color = Color("4f8fbaaa")
 const AGGRO_COLOR: Color = Color("a23e8caa")
@@ -22,10 +22,12 @@ var current_color: Color:
 	set(value):
 		surface_material.albedo_color = value
 var health: float = 3.0
+var color_tween: Tween
 
 @onready var average_center_position: Vector3 = _get_average_center_point()
 @onready var collision_shape_3d: CollisionShape3D = %CollisionShape3D
 @onready var inner_nodes: Node3D = $InnerNodes
+@onready var death_timer: Timer = $Timer
 
 
 func jump(direction: Vector3, strength: float) -> void:
@@ -39,6 +41,8 @@ func _physics_process(_delta: float) -> void:
 
 
 func _process(delta: float) -> void:
+	if state == SlimeState.DEAD:
+		return
 	time_since_last_jump += delta
 
 	current_color = lerp(current_color, target_color, delta)
@@ -78,6 +82,9 @@ func _roam(_delta: float) -> void:
 
 
 func _on_detection_area_body_entered(body: Node) -> void:
+	if state == SlimeState.DEAD:
+		return
+
 	if body is Player:
 		state = SlimeState.ATTACKING
 		attack_target = body
@@ -98,13 +105,33 @@ func _get_average_center_point() -> Vector3:
 
 
 func hit(player: Player) -> void:
+	if state == SlimeState.DEAD:
+		return
+
 	AudioHandlerSingleton.play_random_indexed_sound("slime_hit")
 
 	health -= 1
 	if health <= 0:
-		queue_free()
+		_handle_death()
 		return
 
 	current_color = Color(1, 0, 0)
 	var knockback: Vector3 = player.global_position.direction_to(average_center_position) * 16
 	apply_central_impulse(knockback)
+
+
+func _handle_death() -> void:
+	death_timer.start()
+	pressure_coefficient = 0.0
+	state = SlimeState.DEAD
+
+	var particles: GPUParticles3D = Imports.SLIME_PARTICLES_SCENE.instantiate()
+	inner_nodes.add_child.call_deferred(particles)
+	particles.restart()
+
+	color_tween = create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+	color_tween.tween_property(self, "current_color", Color(1, 1, 1, 0), 6)
+
+
+func _on_timer_timeout() -> void:
+	queue_free()

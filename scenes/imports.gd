@@ -3,6 +3,7 @@ extends Object
 
 const SPREAD_CLOUD_PARTICLES: PackedScene = preload("res://scenes/SpreadCloudParticles.tscn")
 const HELD_SWORD_SCENE: PackedScene = preload("res://scenes/items/sword.tscn")
+const SLIME_PARTICLES_SCENE: PackedScene = preload("res://scenes/slime_particles.tscn")
 
 # SFX
 const SFX: Dictionary = {

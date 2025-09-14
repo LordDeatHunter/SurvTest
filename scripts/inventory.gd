@@ -12,6 +12,16 @@ func _init(init_size: int) -> void:
 		slots.append(Slot.new())
 
 
+func stack_or_add(new_stack: ItemStack) -> bool:
+	if new_stack.is_empty():
+		return true
+
+	if not stack_item(new_stack):
+		return add_item(new_stack)
+
+	return true
+
+
 func add_item(new_stack: ItemStack) -> bool:
 	for i in range(size):
 		if new_stack.is_empty():

@@ -102,6 +102,8 @@ func _handle_held_item_changed(_old_stack: ItemStack, new_stack: ItemStack) -> v
 
 func _input(event):
 	var mouse_mode: int = Input.get_mouse_mode()
+	var selected_slot: Slot = hotbar.slots[hotbar.selected_slot].slot
+
 	if event is InputEventKey and event.is_pressed() and event.keycode == KEY_TAB:
 		if mouse_mode == Input.MOUSE_MODE_CAPTURED:
 			Input.set_mouse_mode(Input.MOUSE_MODE_VISIBLE)
@@ -113,7 +115,6 @@ func _input(event):
 			crosshair.show()
 			inventory.hide()
 			accessories.hide()
-
 	elif (
 		event is InputEventMouseButton
 		and mouse_mode == Input.MOUSE_MODE_VISIBLE
@@ -142,6 +143,15 @@ func _input(event):
 		and event.button_index == MOUSE_BUTTON_LEFT
 	):
 		selected_item.swing(self)
+	elif (
+		selected_slot.has_item()
+		and selected_slot.stack.item is Accessory
+		and event is InputEventMouseButton
+		and mouse_mode != Input.MOUSE_MODE_VISIBLE
+		and event.is_pressed()
+		and event.button_index == MOUSE_BUTTON_RIGHT
+	):
+		accessories.inventory.stack_or_add(selected_slot.stack)
 
 	if (
 		prev_collider

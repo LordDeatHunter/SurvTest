@@ -46,6 +46,7 @@ script = ExtResource("1_57qyk")
 [node name="Grass" type="MultiMeshInstance3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.14549, 0.584927, 7.57081)
 material_override = SubResource("ShaderMaterial_0d8ky")
+visibility_range_end = 100.0
 multimesh = SubResource("MultiMesh_ybsfe")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
@@ -53,6 +54,7 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_ibih5")
 
 [node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+visibility_range_end = 300.0
 mesh = SubResource("PlaneMesh_voint")
 skeleton = NodePath("../..")
 

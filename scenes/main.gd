@@ -5,7 +5,6 @@ const GRASS_PATCH_SCENE: PackedScene = preload("res://scenes/grass_patch.tscn")
 const SLIME_SCENE: PackedScene = preload("res://scenes/slime.tscn")
 
 @export var ground_size: Vector2 = Vector2(32, 32)
-@export var grass_cull_distance: float = 150
 
 @onready var player: Player = $Player
 @onready var grass_patches: Node = $GrassPatches
@@ -55,19 +54,10 @@ func _ready():
 	_spawn_items(32)
 	_spawn_slimes(10)
 
-	_on_hide_patches_timeout()
-
 
 func _process(_delta):
 	if Input.is_action_just_pressed("exit"):
 		get_tree().quit()
-
-
-func _on_hide_patches_timeout():
-	for grass_patch in grass_patches.get_children() as Array[GrassPatch]:
-		grass_patch.grass.visible = (
-			player.global_position.distance_to(grass_patch.global_position) < grass_cull_distance
-		)
 
 
 func _physics_process(_delta: float) -> void:

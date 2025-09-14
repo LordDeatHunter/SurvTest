@@ -30,8 +30,6 @@ volumetric_fog_density = 0.01
 
 [node name="World" type="Node3D"]
 script = ExtResource("1_7561c")
-ground_size = null
-grass_cull_distance = null
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(0.384295, -0.338358, 0.858971, 0, 0.930418, 0.366501, -0.92321, -0.140845, 0.357555, 0, 0, 0)
@@ -68,8 +66,3 @@ size = Vector3(5, 2.04636, 5)
 material = SubResource("StandardMaterial3D_yfgiq")
 
 [node name="GrassPatches" type="Node" parent="."]
-
-[node name="HidePatches" type="Timer" parent="."]
-autostart = true
-
-[connection signal="timeout" from="HidePatches" to="." method="_on_hide_patches_timeout"]

@@ -65,6 +65,7 @@ func _ready():
 
 	held_slot.item_changed.connect(_handle_held_item_changed)
 	hotbar.slot_clicked.connect(_handle_slot_clicked.bind(hotbar))
+	hotbar.item_changed.connect(_on_hotbar_item_changed)
 	inventory.slot_clicked.connect(_handle_slot_clicked.bind(inventory))
 	accessories.slot_clicked.connect(_handle_slot_clicked.bind(accessories))
 	accessories.item_changed.connect(_on_accessory_equip)
@@ -75,16 +76,28 @@ func _ready():
 	accessories.hide()
 
 
-func _on_hotbar_slot_selected(_slot_index: int, slot: Slot) -> void:
-	if selected_item:
+func _handle_sword_visibility(show: bool) -> void:
+	if not show and selected_item:
 		camera.remove_child(selected_item)
 		selected_item.queue_free()
 		selected_item = null
-
-	if slot.has_item() and slot.stack.item.name == "Sword":
+	elif show and not selected_item:
 		selected_item = Imports.HELD_SWORD_SCENE.instantiate()
 		selected_item.position = Vector3(0.96, -1.385, -0.76)
 		camera.add_child(selected_item)
+
+
+func _on_hotbar_item_changed(
+	_old_stack: ItemStack, new_stack: ItemStack, _slot_index: int, _slot: Slot
+) -> void:
+	if _slot_index != hotbar.selected_slot:
+		return
+
+	_handle_sword_visibility(new_stack.has_item() and new_stack.item.name == "Sword")
+
+
+func _on_hotbar_slot_selected(_slot_index: int, slot: Slot) -> void:
+	_handle_sword_visibility(slot.has_item() and slot.stack.item.name == "Sword")
 
 
 func _on_accessory_equip(

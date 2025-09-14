@@ -172,6 +172,14 @@ func _input(event):
 	):
 		hotbar.increment_selected_slot(1 if event.button_index == MOUSE_BUTTON_WHEEL_DOWN else -1)
 
+	if (
+		event is InputEventKey
+		and event.is_pressed()
+		and (event.keycode >= KEY_1 and event.keycode <= KEY_9)
+		and hotbar.inventory.is_slot_in_bounds(event.keycode - KEY_1)
+	):
+		hotbar.selected_slot = event.keycode - KEY_1
+
 
 func _unhandled_input(event):
 	var mouse_mode: int = Input.get_mouse_mode()

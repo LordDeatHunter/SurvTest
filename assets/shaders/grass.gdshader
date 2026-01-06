@@ -14,7 +14,8 @@ uniform sampler2D wind_noise;
 uniform float wind_noise_size: hint_range(0.0, 1.0, 0.001) = 0.05;
 uniform float wind_noise_speed: hint_range(0.0, 1.0, 0.001) = 0.1;
 
-instance uniform vec3 player_position;
+//instance uniform vec3 player_position;
+global uniform vec3 player_position;
 
 void vertex() {
 	vec3 world_position = (MODEL_MATRIX * vec4(VERTEX, 1.0)).xyz;

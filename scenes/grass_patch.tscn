@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://cbeclbekg2cyy"]
+[gd_scene format=3 uid="uid://cbeclbekg2cyy"]
 
 [ext_resource type="Script" uid="uid://boir7kuk8p34" path="res://scenes/grass_patch.gd" id="1_57qyk"]
 [ext_resource type="Shader" uid="uid://oq4vmhaekvk1" path="res://assets/shaders/grass.gdshader" id="2_loflp"]
@@ -40,29 +40,29 @@ albedo_color = Color(0.4408, 0.76, 0.2128, 1)
 material = SubResource("StandardMaterial3D_wem3n")
 size = Vector2(20, 20)
 
-[node name="GrassPatch" type="StaticBody3D"]
+[node name="GrassPatch" type="StaticBody3D" unique_id=913966286]
 script = ExtResource("1_57qyk")
 
-[node name="Grass" type="MultiMeshInstance3D" parent="."]
+[node name="Grass" type="MultiMeshInstance3D" parent="." unique_id=859462050]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -4.14549, 0.584927, 7.57081)
 material_override = SubResource("ShaderMaterial_0d8ky")
 visibility_range_end = 100.0
 multimesh = SubResource("MultiMesh_ybsfe")
 
-[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1480683453]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 shape = SubResource("BoxShape3D_ibih5")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="MeshInstance3D" type="MeshInstance3D" parent="." unique_id=1433714176]
 visibility_range_end = 300.0
 mesh = SubResource("PlaneMesh_voint")
 skeleton = NodePath("../..")
 
-[node name="grass_straw" type="MeshInstance3D" parent="."]
+[node name="grass_straw" type="MeshInstance3D" parent="." unique_id=1564107884]
 transform = Transform3D(-1.62921e-07, 0, -1, 0, 1, 0, 1, 0, -1.62921e-07, -0.019, 2.357, 4.855)
 visible = false
 mesh = ExtResource("3_fbjsp")
 
-[node name="GPUParticlesCollisionHeightField3D" type="GPUParticlesCollisionHeightField3D" parent="."]
+[node name="GPUParticlesCollisionHeightField3D" type="GPUParticlesCollisionHeightField3D" parent="." unique_id=981817689]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
 size = Vector3(20, 1, 20)

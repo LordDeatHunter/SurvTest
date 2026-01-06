@@ -74,7 +74,4 @@ func _process(_delta):
 
 
 func _physics_process(_delta: float) -> void:
-	for grass_patch in grass_patches.get_children() as Array[GrassPatch]:
-		grass_patch.grass.set_deferred(
-			"instance_shader_parameters/player_position", player.position
-		)
+	RenderingServer.global_shader_parameter_set("player_position", player.position)

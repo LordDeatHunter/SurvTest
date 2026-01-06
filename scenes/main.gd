@@ -3,6 +3,7 @@ extends Node3D
 const DROPPED_ITEM_SCENE: PackedScene = preload("res://scenes/DroppedItem.tscn")
 const GRASS_PATCH_SCENE: PackedScene = preload("res://scenes/grass_patch.tscn")
 const SLIME_SCENE: PackedScene = preload("res://scenes/slime.tscn")
+const TREE: PackedScene = preload("uid://b1ymy15crqet5")
 
 @export var ground_size: Vector2 = Vector2(32, 32)
 
@@ -43,8 +44,19 @@ func _spawn_slimes(amount: int) -> void:
 		add_child(slime)
 
 
+func _spawn_trees(amount: int) -> void:
+	for i in range(amount):
+		var tree: StaticBody3D = TREE.instantiate()
+		tree.position = Vector3(
+			randf_range(-ground_size.x * 4, ground_size.x * 4),
+			0,
+			randf_range(-ground_size.y * 4, ground_size.y * 4)
+		)
+		add_child(tree)
+
+
 func _ready():
-	AudioHandlerSingleton.play_music("save-as")
+	AudioHandlerSingleton.play_music("pixel-quest")
 	for x in range(-ground_size.x / 2, ground_size.x / 2 + 1):
 		for z in range(-ground_size.y / 2, ground_size.y / 2 + 1):
 			var grass_patch: StaticBody3D = GRASS_PATCH_SCENE.instantiate()
@@ -53,6 +65,7 @@ func _ready():
 
 	_spawn_items(32)
 	_spawn_slimes(10)
+	_spawn_trees(512)
 
 
 func _process(_delta):
